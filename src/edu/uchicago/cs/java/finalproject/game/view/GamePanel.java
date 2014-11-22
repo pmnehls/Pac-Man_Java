@@ -1,14 +1,9 @@
 package edu.uchicago.cs.java.finalproject.game.view;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Panel;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JFrame;
@@ -34,17 +29,25 @@ import edu.uchicago.cs.java.finalproject.game.model.Movable;
 	private GameFrame gmf;
 	private Font fnt = new Font("SansSerif", Font.BOLD, 12);
 	private Font fntBig = new Font("SansSerif", Font.BOLD + Font.ITALIC, 36);
+    private Font fntlogo = new Font("Arial", Font.PLAIN, 2);
+
 	private FontMetrics fmt; 
 	private int nFontWidth;
 	private int nFontHeight;
 	private String strDisplay = "";
-	
+
+    private static final String strFile = System.getProperty("user.dir") + "/src/edu/uchicago/cs/java/finalproject/game/model/Joystix.TTF";
+
+    public Font joystix = initJoystixFont();
+
+
 
 	// ==============================================================
 	// CONSTRUCTOR 
 	// ==============================================================
 	
 	public GamePanel(Dimension dim){
+        initJoystixFont();
 	    gmf = new GameFrame();
 		gmf.getContentPane().add(this);
 		gmf.pack();
@@ -55,6 +58,8 @@ import edu.uchicago.cs.java.finalproject.game.model.Movable;
 		gmf.setResizable(false);
 		gmf.setVisible(true);
 		this.setFocusable(true);
+
+
 	}
 	
 	
@@ -87,6 +92,7 @@ import edu.uchicago.cs.java.finalproject.game.model.Movable;
 		drawScore(grpOff);
 		
 		if (!CommandCenter.isPlaying()) {
+            //printLogo();
 			displayTextOnScreen();
 		} else if (CommandCenter.isPaused()) {
 			strDisplay = "Game Paused";
@@ -143,7 +149,7 @@ import edu.uchicago.cs.java.finalproject.game.model.Movable;
 		int[] nXs = new int[nLen];
 		int[] nYs = new int[nLen];
 	
-		//convert to cartesean points
+		//convert to cartesian points
 		for (int nC = 0; nC < nLen; nC++) {
 			pntMs[nC] = new Point((int) (10 * dLens[nC] * Math.sin(Math
 					.toRadians(90) + fal.getDegrees()[nC])),
@@ -176,9 +182,9 @@ import edu.uchicago.cs.java.finalproject.game.model.Movable;
 	// This method draws some text to the middle of the screen before/after a game
 	private void displayTextOnScreen() {
 
-		strDisplay = "GAME OVER";
-		grpOff.drawString(strDisplay,
-				(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4);
+		//strDisplay = "GAME OVER";
+		//grpOff.drawString(strDisplay,
+		//		(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4);
 
 		strDisplay = "use the arrow keys to turn and thrust";
 		grpOff.drawString(strDisplay,
@@ -221,5 +227,51 @@ import edu.uchicago.cs.java.finalproject.game.model.Movable;
 	}
 	
 	public GameFrame getFrm() {return this.gmf;}
-	public void setFrm(GameFrame frm) {this.gmf = frm;}	
+	public void setFrm(GameFrame frm) {this.gmf = frm;}
+
+    public Font initJoystixFont()
+    {
+        try
+        {
+            Font fntTemp = Font.createFont(Font.TRUETYPE_FONT,new File(strFile));
+
+            return fntTemp.deriveFont(18f);
+        } catch (FontFormatException e)
+        {
+            e.printStackTrace();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private void printLogo()
+    {
+        String strLogo =
+                        "                                   .:rrs;.                                                                  \n" +
+                        "                                 ,2Ah5si3BMr             .3HA                                               \n" +
+                        "                     r::       ,H@G:     .;&M;           s@#@@.        .3As                                 \n" +
+                        "       .:rS22r.     ;@@@B     .#@,    ...    @i          s#. @@:     .3@#@@       :A&r                      \n" +
+                        " :sXB#@@#Hh22XX#@:  h# :@@    X@   .....  .S@@2 S5XX2A:  iB   #@r  .2@#: @9      i@MM@:     ,:              \n" +
+                        " i@A;:,         2@r:#s  .@@:  @2 ..,,,.,iB@@S.  @@SS52@2 SH    G@2s@@;  .@r    ,A@i  @M     h@@A    2i:.    \n" +
+                        "  @S      ri   ,sX@XA     A@i #2 ..,,,.r@@2     s@..,.A@i5G     s@@r    ;@,   r@M,   2@.   .#h3@S  ;@##@@#  \n" +
+                        "  X#  ....@@.  ;Xr@@: .    r@5.M ......:ii29Xi;  .@@@@#Ai92 ..   .   .. i@  .9@5      @G   r@, M@: A#  .;2@ \n" +
+                        "  ;@r .,.   ,:s5:M@A ..@@. rs#A5S  ....    s#;@;        :Bs ...    .. G,X@ ,##:  ,s.  h@   &A   @@;#;    ;@:\n" +
+                        "   #A ... 2hS23h@9M  . sS   3;9@AS:       ;5S@@.        i@,      .... @.HB;@X  . &@2 ..@S ;#r   .@@M  .. @@ \n" +
+                        "   5@. .. 9X;@2::Xi ..    .:,#:;@Xr22srrriM##i           #3irr;:,.:XSsG @#9,  ..  .  3;3@ SM  .  ,@r .. ;@S \n" +
+                        "   ,@i .   #.@  iA     .,:sAG3hS@@5 .:sX9S;               X@@@@@@@@@@#hX@@: ..     ,..A.@93i ...  ;. ., M@  \n" +
+                        "    M# :;;;& #9 M@SH@@@@@@BXir;,                                   .,;riS&M@@@@@AXsXXr& 2@H  ...     rH,@i  \n" +
+                        "    r@i9HHBAH@@  2hi;,                                                       .:s3B@@@#HXh@A      ,.  @:9@   \n" +
+                        "      sMH2r:.                                                                         :r5G@@@@AS;2Xsi& @S   \n" +
+                        "                                                                                            :SH@@@@#H:9@    \n" +
+                        "                                                                                                  ,;s5hr    \n";
+
+        grpOff.drawString(strLogo, nFontHeight/2, nFontWidth/2);
+
+
+                //(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4
+                //        + nFontHeight + 40);
+    }
 }

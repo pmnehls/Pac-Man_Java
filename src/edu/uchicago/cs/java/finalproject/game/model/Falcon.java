@@ -47,7 +47,7 @@ public class Falcon extends Sprite {
 		ArrayList<Point> pntCs = new ArrayList<Point>();
 		
 		// top of ship
-		pntCs.add(new Point(0, 18)); 
+		pntCs.add(new Point(0, 18));
 		
 		//right points
 		pntCs.add(new Point(3, 3)); 
@@ -74,7 +74,7 @@ public class Falcon extends Sprite {
 
 		assignPolarPoints(pntCs);
 
-		setColor(Color.white);
+		setColor(Color.BLUE);
 		
 		//put falcon in the middle.
 		setCenter(new Point(Game.DIM.width / 2, Game.DIM.height / 2));
@@ -83,7 +83,7 @@ public class Falcon extends Sprite {
 		setOrientation(Game.R.nextInt(360));
 		
 		//this is the size of the falcon
-		setRadius(35);
+		setRadius(5);
 
 		//these are falcon specific
 		setProtected(true);

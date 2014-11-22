@@ -1,6 +1,7 @@
 package edu.uchicago.cs.java.finalproject.game.model;
 
 
+import java.awt.*;
 import java.util.Arrays;
 
 import edu.uchicago.cs.java.finalproject.controller.Game;
@@ -42,6 +43,7 @@ public class Asteroid extends Sprite {
 		setDeltaY(nDY);
 			
 		assignRandomShape();
+        setColor(Color.RED);
 		
 		//an nSize of zero is a big asteroid
 		//a nSize of 1 or 2 is med or small asteroid respectively

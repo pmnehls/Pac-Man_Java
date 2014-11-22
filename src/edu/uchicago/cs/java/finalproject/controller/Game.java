@@ -1,5 +1,24 @@
 package edu.uchicago.cs.java.finalproject.controller;
 
+/*
+                                     ,2Ah5si3BMr             .3HA
+                         r::       ,H@G:     .;&M;           s@#@@.        .3As
+           .:rS22r.     ;@@@B     .#@,    ...    @i          s#. @@:     .3@#@@       :A&r
+     :sXB#@@#Hh22XX#@:  h# :@@    X@   .....  .S@@2 S5XX2A:  iB   #@r  .2@#: @9      i@MM@:     ,:
+     i@A;:,         2@r:#s  .@@:  @2 ..,,,.,iB@@S.  @@SS52@2 SH    G@2s@@;  .@r    ,A@i  @M     h@@A    2i:.
+      @S      ri   ,sX@XA     A@i #2 ..,,,.r@@2     s@..,.A@i5G     s@@r    ;@,   r@M,   2@.   .#h3@S  ;@##@@#
+      X#  ....@@.  ;Xr@@: .    r@5.M ......:ii29Xi;  .@@@@#Ai92 ..   .   .. i@  .9@5      @G   r@, M@: A#  .;2@
+      ;@r .,.   ,:s5:M@A ..@@. rs#A5S  ....    s#;@;        :Bs ...    .. G,X@ ,##:  ,s.  h@   &A   @@;#;    ;@:
+       #A ... 2hS23h@9M  . sS   3;9@AS:       ;5S@@.        i@,      .... @.HB;@X  . &@2 ..@S ;#r   .@@M  .. @@
+       5@. .. 9X;@2::Xi ..    .:,#:;@Xr22srrriM##i           #3irr;:,.:XSsG @#9,  ..  .  3;3@ SM  .  ,@r .. ;@S
+       ,@i .   #.@  iA     .,:sAG3hS@@5 .:sX9S;               X@@@@@@@@@@#hX@@: ..     ,..A.@93i ...  ;. ., M@
+        M# :;;;& #9 M@SH@@@@@@BXir;,                                   .,;riS&M@@@@@AXsXXr& 2@H  ...     rH,@i
+        r@i9HHBAH@@  2hi;,                                                       .:s3B@@@#HXh@A      ,.  @:9@
+          sMH2r:.                                                                         :r5G@@@@AS;2Xsi& @S
+                                                                                                :SH@@@@#H:9@
+                                                                                                      ,;s5hr
+*/
+
 import sun.audio.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -22,7 +41,7 @@ public class Game implements Runnable, KeyListener {
 	// FIELDS
 	// ===============================================
 
-	public static final Dimension DIM = new Dimension(1100, 900); //the dimension of the game.
+	public static final Dimension DIM = new Dimension(TargetSpace.TS_WIDTH* 28, TargetSpace.TS_HEIGHT * 38); //the dimension of the game.
 	private GamePanel gmpPanel;
 	public static Random R = new Random();
 	public final static int ANI_DELAY = 45; // milliseconds between screen
@@ -39,7 +58,8 @@ public class Game implements Runnable, KeyListener {
 			QUIT = 81, // q key
 			LEFT = 37, // rotate left; left arrow
 			RIGHT = 39, // rotate right; right arrow
-			UP = 38, // thrust; up arrow
+			UP = 38, // move up
+            DOWN = 40, // move down
 			START = 83, // s key
 			FIRE = 32, // space key
 			MUTE = 77, // m-key mute
@@ -305,10 +325,10 @@ public class Game implements Runnable, KeyListener {
 
 	//this method spawns new asteroids
 	private void spawnAsteroids(int nNum) {
-		for (int nC = 0; nC < nNum; nC++) {
-			//Asteroids with size of zero are big
-			CommandCenter.movFoes.add(new Asteroid(0));
-		}
+		//for (int nC = 0; nC < nNum; nC++) {
+		//	//Asteroids with size of zero are big
+		//	CommandCenter.movFoes.add(new Asteroid(0));
+		//}
 	}
 	
 	
@@ -356,14 +376,14 @@ public class Game implements Runnable, KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		Falcon fal = CommandCenter.getFalcon();
+		Pacman pacman = CommandCenter.getPacman();
 		int nKey = e.getKeyCode();
 		// System.out.println(nKey);
 
 		if (nKey == START && !CommandCenter.isPlaying())
 			startGame();
 
-		if (fal != null) {
+		if (pacman != null) {
 
 			switch (nKey) {
 			case PAUSE:
@@ -377,16 +397,19 @@ public class Game implements Runnable, KeyListener {
 				System.exit(0);
 				break;
 			case UP:
-				fal.thrustOn();
+				pacman.moveUp();
 				if (!CommandCenter.isPaused())
 					clpThrust.loop(Clip.LOOP_CONTINUOUSLY);
 				break;
 			case LEFT:
-				fal.rotateLeft();
+				pacman.moveLeft();
 				break;
 			case RIGHT:
-				fal.rotateRight();
+				pacman.moveRight();
 				break;
+            case DOWN:
+                pacman.moveDown();
+                break;
 
 			// possible future use
 			// case KILL:
@@ -399,53 +422,54 @@ public class Game implements Runnable, KeyListener {
 		}
 	}
 
-	@Override
-	public void keyReleased(KeyEvent e) {
-		Falcon fal = CommandCenter.getFalcon();
-		int nKey = e.getKeyCode();
-		 System.out.println(nKey);
-
-		if (fal != null) {
-			switch (nKey) {
-			case FIRE:
-				CommandCenter.movFriends.add(new Bullet(fal));
-				Sound.playSound("laser.wav");
-				break;
-				
-			//special is a special weapon, current it just fires the cruise missile. 
-			case SPECIAL:
-				CommandCenter.movFriends.add(new Cruise(fal));
-				//Sound.playSound("laser.wav");
-				break;
-				
-			case LEFT:
-				fal.stopRotating();
-				break;
-			case RIGHT:
-				fal.stopRotating();
-				break;
-			case UP:
-				fal.thrustOff();
-				clpThrust.stop();
-				break;
-				
-			case MUTE:
-				if (!bMuted){
-					stopLoopingSounds(clpMusicBackground);
-					bMuted = !bMuted;
-				} 
-				else {
-					clpMusicBackground.loop(Clip.LOOP_CONTINUOUSLY);
-					bMuted = !bMuted;
-				}
-				break;
-				
-				
-			default:
-				break;
-			}
-		}
-	}
+    public void keyReleased(KeyEvent e) {}
+//	@Override
+//	public void keyReleased(KeyEvent e) {
+//		Pacman pacman = CommandCenter.getPacman();
+//		int nKey = e.getKeyCode();
+//		 System.out.println(nKey);
+//
+//		if (pacman != null) {
+//			switch (nKey) {
+//			case FIRE:
+//				//CommandCenter.movFriends.add(new Bullet(fal));
+//				Sound.playSound("laser.wav");
+//				break;
+//
+//			//special is a special weapon, current it just fires the cruise missile.
+//			case SPECIAL:
+//				//CommandCenter.movFriends.add(new Cruise(fal));
+//				//Sound.playSound("laser.wav");
+//				break;
+//
+//			case LEFT:
+//				//fal.stopRotating();
+//				break;
+//			case RIGHT:
+//				fal.stopRotating();
+//				break;
+//			case UP:
+//				fal.thrustOff();
+//				clpThrust.stop();
+//				break;
+//
+//			case MUTE:
+//				if (!bMuted){
+//					stopLoopingSounds(clpMusicBackground);
+//					bMuted = !bMuted;
+//				}
+//				else {
+//					clpMusicBackground.loop(Clip.LOOP_CONTINUOUSLY);
+//					bMuted = !bMuted;
+//				}
+//				break;
+//
+//
+//			default:
+//				break;
+//			}
+//		}
+//	}
 
 	@Override
 	// Just need it b/c of KeyListener implementation

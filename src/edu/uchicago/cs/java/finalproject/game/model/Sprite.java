@@ -73,7 +73,7 @@ public abstract class Sprite implements Movable {
 
 	//you can override this and many more in the subclasses
 		setDim(Game.DIM);
-		setColor(Color.white);
+		setColor(Color.WHITE);
 		setCenter(new Point(Game.R.nextInt(Game.DIM.width),
 				Game.R.nextInt(Game.DIM.height)));
 
@@ -232,6 +232,7 @@ public abstract class Sprite implements Movable {
 		}
 		return dDegs;
 	}
+
 	//utility function to convert to polar
 	protected double[] convertToPolarLens(ArrayList<Point> pntPoints) {
 
