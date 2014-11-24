@@ -14,30 +14,36 @@ public class CommandCenter {
 	private static Falcon falShip;
     private static Pacman pacman;
 	private static boolean bPlaying;
+    private static boolean bIntroDone = false;
 	private static boolean bPaused;
     private int nSecondTimer;
+    private int nScore;
 
 	// These ArrayLists are thread-safe
 	public static CopyOnWriteArrayList<Movable> movDebris = new CopyOnWriteArrayList<Movable>();
 	public static CopyOnWriteArrayList<Movable> movFriends = new CopyOnWriteArrayList<Movable>();
+    public static CopyOnWriteArrayList<Movable> movPacman = new CopyOnWriteArrayList<Movable>();
 	public static CopyOnWriteArrayList<Movable> movFoes = new CopyOnWriteArrayList<Movable>();
 	public static CopyOnWriteArrayList<Movable> movFloaters = new CopyOnWriteArrayList<Movable>();
 	public static CopyOnWriteArrayList<Movable> movEnergizers = new CopyOnWriteArrayList<Movable>();
+	public static CopyOnWriteArrayList<Movable> movDots = new CopyOnWriteArrayList<Movable>();
 
     //create board as a grid of target spaces
     public static TargetSpace[][] grid = new TargetSpace[29][37];
-    //private static TargetSpace[][] grid = Grid.
 
 	// Constructor made private - static Utility class only
 	private CommandCenter() {}
 	
 	public static void initGame(){
         setMaze();
+        //playIntro();
+        initPacmanLives();
         spawnPacman(true);
+        //pacman.getPacmanSpaceCoord();
         spawnBlinky(true);
 		setLevel(1);
 		setScore(0);
-		setNumFalcons(103);
+		setNumFalcons(1);
 		spawnFalcon(true);
 	}
 	
@@ -57,7 +63,7 @@ public class CommandCenter {
                     }
                     else if (grid[nC][nD].getIsDot())
                     {
-                        movDebris.add(new Dot(nC, nD));
+                        movDots.add(new Dot(nC, nD));
                     }
                     else if (grid[nC][nD].getIsGhostBox())
                     {
@@ -73,15 +79,44 @@ public class CommandCenter {
         }
     }
 
+    public void removeDot()
+    {
+        if (grid[pacman.getPacManSpaceX()][pacman.getPacManSpaceY()].getIsDot())
+        {
+            nScore = nScore + 10;
+            grid[pacman.getPacManSpaceX()][pacman.getPacManSpaceY()].setIsDot(false);
+        }
+    }
+
+    public static void playIntro()
+    {
+        Sound.playSound("pacman_beginning.wav");
+        try
+        {
+            Thread.sleep(4750);
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+        bIntroDone = true;
+    }
+
+    public static void initPacmanLives()
+    {
+        Life life1 = new Life(TargetSpace.TS_WIDTH*3, TargetSpace.TS_HEIGHT*35);
+        Life life2 = new Life(TargetSpace.TS_WIDTH*5, TargetSpace.TS_HEIGHT*35);
+        Life life3 = new Life(TargetSpace.TS_WIDTH*7, TargetSpace.TS_HEIGHT*35);
+        movDebris.add(life1);
+        movDebris.add(life2);
+        movDebris.add(life3);
+    }
+
     public static void spawnPacman(boolean bFirst)
     {
-        if (bFirst)
-        {
-            Sound.playSound("pacman_beginning.wav");
-        }
         bFirst = false;
         pacman = new Pacman();
-        movFriends.add(pacman);
+        movPacman.add(pacman);
     }
 
     public static void spawnBlinky(boolean bFirstBlinky)
@@ -104,22 +139,10 @@ public class CommandCenter {
 
 		if (getNumFalcons() != 0) {
 			falShip = new Falcon();
-            //energizerOne = new Energizer(1);
-            //energizerTwo = new Energizer(2);
-            //energizerThree = new Energizer(3);
-            //energizerFour = new Energizer(4);
-            //dot = new Dot();
 			movFriends.add(falShip);
-            //movFriends.add(energizerOne);
-            //movFriends.add(energizerTwo);
-            //movFriends.add(energizerThree);
-            //movFriends.add(energizerFour);
-            //movFriends.add(dot);
 			if (!bFirst)
 			    setNumFalcons(getNumFalcons() - 1);
 		}
-		
-		Sound.playSound("shipspawn.wav");
 
 	}
 	
@@ -191,7 +214,7 @@ public class CommandCenter {
 		return movDebris;
 	}
 
-
+    public static CopyOnWriteArrayList<Movable> getMovDots() {return movDots;}
 
 	public static CopyOnWriteArrayList<Movable> getMovFriends() {
 		return movFriends;

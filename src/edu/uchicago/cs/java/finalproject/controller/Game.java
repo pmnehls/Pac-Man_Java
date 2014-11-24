@@ -1,4 +1,3 @@
-package edu.uchicago.cs.java.finalproject.controller;
 
 /*
                                      ,2Ah5si3BMr             .3HA
@@ -18,6 +17,8 @@ package edu.uchicago.cs.java.finalproject.controller;
                                                                                                 :SH@@@@#H:9@
                                                                                                       ,;s5hr
 */
+
+package edu.uchicago.cs.java.finalproject.controller;
 
 import sun.audio.*;
 import java.awt.*;
@@ -41,7 +42,7 @@ public class Game implements Runnable, KeyListener {
 	// FIELDS
 	// ===============================================
 
-	public static final Dimension DIM = new Dimension(TargetSpace.TS_WIDTH* 28, TargetSpace.TS_HEIGHT * 38); //the dimension of the game.
+	public static final Dimension DIM = new Dimension(TargetSpace.TS_WIDTH* 28, TargetSpace.TS_HEIGHT * 37); //the dimension of the game.
 	private GamePanel gmpPanel;
 	public static Random R = new Random();
 	public final static int ANI_DELAY = 45; // milliseconds between screen
@@ -49,9 +50,11 @@ public class Game implements Runnable, KeyListener {
 	private Thread thrAnim;
 	private int nLevel = 1;
 	private int nTick = 0;
+    private int nDotCounter = 0;
 	private ArrayList<Tuple> tupMarkForRemovals;
 	private ArrayList<Tuple> tupMarkForAdds;
 	private boolean bMuted = true;
+    private boolean bIntroDone = false;
 	
 
 	private final int PAUSE = 80, // p key
@@ -88,7 +91,6 @@ public class Game implements Runnable, KeyListener {
 
 		clpThrust = Sound.clipForLoopFactory("whitenoise.wav");
 		clpMusicBackground = Sound.clipForLoopFactory("music-background.wav");
-	
 
 	}
 
@@ -179,6 +181,25 @@ public class Game implements Runnable, KeyListener {
 
 		Point pntFriendCenter, pntFoeCenter;
 		int nFriendRadiux, nFoeRadiux;
+
+        for (Movable pacman : CommandCenter.movPacman)
+        {
+            for (Movable dot : CommandCenter.movDots)
+            {
+                Point pntPacman = pacman.getCenter();
+                Point pntDot = dot.getCenter();
+
+                if (Math.abs(pntPacman.x - pntDot.x) < 4)
+                {
+                    if (Math.abs(pntPacman.y - pntDot.y) < 4)
+                    {
+                        tupMarkForRemovals.add(new Tuple(CommandCenter.movDots, dot));
+                        nDotCounter += 1;
+                    }
+                }
+
+            }
+        }
 
 		for (Movable movFriend : CommandCenter.movFriends) {
 			for (Movable movFoe : CommandCenter.movFoes) {
@@ -397,18 +418,16 @@ public class Game implements Runnable, KeyListener {
 				System.exit(0);
 				break;
 			case UP:
-				pacman.moveUp();
-				if (!CommandCenter.isPaused())
-					clpThrust.loop(Clip.LOOP_CONTINUOUSLY);
+				pacman.turnUp();
 				break;
 			case LEFT:
-				pacman.moveLeft();
+				pacman.turnLeft();
 				break;
 			case RIGHT:
-				pacman.moveRight();
+				pacman.turnRight();
 				break;
             case DOWN:
-                pacman.moveDown();
+                pacman.turnDown();
                 break;
 
 			// possible future use
@@ -473,7 +492,52 @@ public class Game implements Runnable, KeyListener {
 
 	@Override
 	// Just need it b/c of KeyListener implementation
-	public void keyTyped(KeyEvent e) {
+	public void keyTyped(KeyEvent e)
+    {
+//        Pacman pacman = CommandCenter.getPacman();
+//        int nKey = e.getKeyCode();
+//        // System.out.println(nKey);
+//
+//        if (nKey == START && !CommandCenter.isPlaying())
+//            startGame();
+//
+//        if (pacman != null) {
+//
+//            switch (nKey) {
+//                case PAUSE:
+//                    CommandCenter.setPaused(!CommandCenter.isPaused());
+//                    if (CommandCenter.isPaused())
+//                        stopLoopingSounds(clpMusicBackground, clpThrust);
+//                    else
+//                        clpMusicBackground.loop(Clip.LOOP_CONTINUOUSLY);
+//                    break;
+//                case QUIT:
+//                    System.exit(0);
+//                    break;
+//                case UP:
+//                    pacman.turnUp();
+//                    if (!CommandCenter.isPaused())
+//                        clpThrust.loop(Clip.LOOP_CONTINUOUSLY);
+//                    break;
+//                case LEFT:
+//                    pacman.turnLeft();
+//                    break;
+//                case RIGHT:
+//                    pacman.turnRight();
+//                    break;
+//                case DOWN:
+//                    pacman.turnDown();
+//                    break;
+//
+//                // possible future use
+//                // case KILL:
+//                // case SHIELD:
+//                // case NUM_ENTER:
+//
+//                default:
+//                    break;
+//            }
+//        }
 	}
 	
 

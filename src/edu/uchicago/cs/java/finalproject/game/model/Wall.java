@@ -6,17 +6,17 @@ import java.util.ArrayList;
 /**
  * Created by pmnehls on 11/19/14.
  */
-public class Wall extends Sprite implements Gridable
+public class Wall extends Sprite
 {
-    private int x;
-    private int y;
+    private int nWallX;
+    private int nWallY;
 
     public Wall(int x, int y)
     {
         super();
 
-        this.x = x;
-        this.y = y;
+        nWallX = x;
+        nWallY = y;
 
         ArrayList<Point> pntCs = new ArrayList<Point>();
 
@@ -35,7 +35,7 @@ public class Wall extends Sprite implements Gridable
 
         setCenter(new Point(nHeight * (x - 1) + nHeight/2, nWidth * (y - 1) + nWidth/2));
 
-        setRadius(8);
+        setRadius(6);
     }
 
     public void drawWall()
@@ -47,5 +47,15 @@ public class Wall extends Sprite implements Gridable
     public void draw(Graphics g) {
         super.draw(g);
         g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
+    }
+
+    public int getWallX()
+    {
+        return nWallX;
+    }
+
+    public int getnWallY()
+    {
+        return nWallY;
     }
 }

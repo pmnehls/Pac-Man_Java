@@ -1,7 +1,9 @@
 package edu.uchicago.cs.java.finalproject.game.model;
 
 import edu.uchicago.cs.java.finalproject.controller.Game;
+import edu.uchicago.cs.java.finalproject.sounds.Sound;
 
+import javax.sound.sampled.Clip;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,15 +30,27 @@ public class Pacman extends Sprite
     private boolean bTurningRight = false;
     private boolean bTurningLeft = false;
 
+    private boolean bFacingLeft = true;
+    private boolean bFacingRight = false;
+    private boolean bFacingUp = false;
+    private boolean bFacingDown = false;
+
+    private Clip clpWakawaka;
+
+    //private TargetSpace currentSpace;
+    private int spaceX;
+    private int spaceY;
+    private double dPacManSpeed = 4.0;
+    private int nPacManSpeed = 3;
     private int nShield;
 
     private final double[] FLAME = { 23 * Math.PI / 24 + Math.PI / 2,
             Math.PI + Math.PI / 2, 25 * Math.PI / 24 + Math.PI / 2 };
 
-    private int[] nXFlames = new int[FLAME.length];
-    private int[] nYFlames = new int[FLAME.length];
-
-    private Point[] pntFlames = new Point[FLAME.length];
+//    private int[] nXFlames = new int[FLAME.length];
+//    private int[] nYFlames = new int[FLAME.length];
+//
+//    private Point[] pntFlames = new Point[FLAME.length];
 
 
     // ==============================================================
@@ -99,6 +113,9 @@ public class Pacman extends Sprite
         //this is the size of the falcon
         setRadius(12);
 
+        //set up dot eating sound
+        clpWakawaka = Sound.clipForLoopFactory("waka.wav");
+
     }
 
 
@@ -108,6 +125,38 @@ public class Pacman extends Sprite
 
     public void move() {
         super.move();
+
+        Point currPnt = getPacmanSpaceCoord();
+        spaceX = currPnt.x;
+        spaceY = currPnt.y;
+
+        switch(this.getOrientation())
+        {
+            case 270: moveLeft();
+                break;
+            case 0: moveUp();
+                break;
+            case 90: moveRight();
+                break;
+            case 180: moveDown();
+                break;
+        }
+
+        if (CommandCenter.grid[spaceX][spaceY].getIsDot())
+        {
+            clpWakawaka.loop(2);
+            //Sound.playSound("pacman_chomp.wav");
+            CommandCenter.grid[spaceX][spaceY].setIsDot(false);
+        }
+
+        //if (currentSpace.getIsEnergizer())
+        {
+
+        }
+        if (bFacingLeft)
+        {
+           super.setCenter(getCenter());
+        }
         if (bThrusting) {
             bFlame = true;
             double dAdjustX = Math.cos(Math.toRadians(getOrientation()))
@@ -134,22 +183,140 @@ public class Pacman extends Sprite
 
     public void moveLeft()
     {
-        
+        Point pnt = getCenter();
+        Point targetSpace = getPacmanSpaceCoord();
+        TargetSpace nextSpace = new TargetSpace(targetSpace.x - 1, targetSpace.y);
+
+        if (!nextSpace.getIsWall())
+        {
+            pnt.x = pnt.x - nPacManSpeed;
+            setCenter(pnt);
+        }
+        else
+        {
+            if(pnt.x > ((nextSpace.getSpaceX())*TargetSpace.TS_WIDTH + TargetSpace.TS_WIDTH/2))
+            {
+                pnt.x = pnt.x - nPacManSpeed;
+                setCenter(pnt);
+            }
+        }
+
     }
 
     public void moveUp()
     {
+        Point pnt = getCenter();
+        Point targetSpace = getPacmanSpaceCoord();
+        TargetSpace nextSpace = new TargetSpace(targetSpace.x, targetSpace.y - 1);
 
+        if (!nextSpace.getIsWall())
+        {
+            pnt.y = pnt.y - nPacManSpeed;
+            setCenter(pnt);
+        }
+        else
+        {
+            if(pnt.y > ((nextSpace.getSpaceY())*TargetSpace.TS_HEIGHT + TargetSpace.TS_HEIGHT/2))
+            {
+                pnt.y = pnt.y - nPacManSpeed;
+                setCenter(pnt);
+            }
+        }
     }
 
     public void moveRight()
     {
+        Point pnt = getCenter();
+        Point targetSpace = getPacmanSpaceCoord();
+        TargetSpace nextSpace = new TargetSpace(targetSpace.x + 1, targetSpace.y);
 
+        if (!nextSpace.getIsWall())
+        {
+            pnt.x = pnt.x + nPacManSpeed;
+            setCenter(pnt);
+        }
+        else
+        {
+            if(pnt.x < ((nextSpace.getSpaceX()-1)*TargetSpace.TS_WIDTH - TargetSpace.TS_WIDTH/2))
+            {
+                pnt.x = pnt.x + nPacManSpeed;
+                setCenter(pnt);
+            }
+        }
     }
 
     public void moveDown()
     {
+        Point pnt = getCenter();
+        Point targetSpace = getPacmanSpaceCoord();
+        TargetSpace nextSpace = new TargetSpace(targetSpace.x, targetSpace.y + 1);
 
+        if (!nextSpace.getIsWall())
+        {
+            pnt.y = pnt.y + nPacManSpeed;
+            setCenter(pnt);
+        }
+        else
+        {
+            if(pnt.y < ((nextSpace.getSpaceY() - 1)*TargetSpace.TS_HEIGHT - TargetSpace.TS_HEIGHT/2))
+            {
+                pnt.y = pnt.y + nPacManSpeed;
+                setCenter(pnt);
+            }
+        }
+    }
+
+    public void turnLeft()
+    {
+        Point pnt = getCenter();
+        Point targetSpace = getPacmanSpaceCoord();
+        TargetSpace turnLeft = new TargetSpace(targetSpace.x -1, targetSpace.y);
+
+        if(!turnLeft.getIsWall())
+        {
+            setOrientation(270);
+            setCenter(new Point(pnt.x, (targetSpace.y * TargetSpace.TS_HEIGHT - TargetSpace.TS_HEIGHT/2)));
+        }
+    }
+
+    public void turnUp()
+    {
+        Point pnt = getCenter();
+        Point targetSpace = getPacmanSpaceCoord();
+        TargetSpace turnUp = new TargetSpace(targetSpace.x, targetSpace.y -1);
+
+        if(!turnUp.getIsWall())
+        {
+            setOrientation(0);
+            setCenter(new Point((targetSpace.x * TargetSpace.TS_WIDTH - TargetSpace.TS_WIDTH/2), pnt.y));
+        }
+    }
+
+    public void turnRight()
+    {
+        Point pnt = getCenter();
+        Point targetSpace = getPacmanSpaceCoord();
+        TargetSpace turnRight = new TargetSpace(targetSpace.x + 1, targetSpace.y);
+
+        if(!turnRight.getIsWall())
+        {
+            setOrientation(90);
+            setCenter(new Point(pnt.x, ((targetSpace.y * TargetSpace.TS_HEIGHT) - (TargetSpace.TS_HEIGHT/2 + 1)))); // adjusted for shape of pacman
+        }
+    }
+
+    public void turnDown()
+    {
+        Point pnt = getCenter();
+        Point targetSpace = getPacmanSpaceCoord();
+        TargetSpace turnDown = new TargetSpace(targetSpace.x, targetSpace.y + 1);
+
+        if(!turnDown.getIsWall())
+        {
+            setOrientation(180);
+            setCenter(new Point((targetSpace.x * TargetSpace.TS_WIDTH - TargetSpace.TS_WIDTH/2), pnt.y));
+
+        }
     }
     public void rotateLeft() {
         bTurningLeft = true;
@@ -164,22 +331,22 @@ public class Pacman extends Sprite
         bTurningLeft = false;
     }
 
-    public void thrustOn() {
-        bThrusting = true;
-    }
+//    public void thrustOn() {
+//        bThrusting = true;
+//    }
+//
+//    public void thrustOff() {
+//        bThrusting = false;
+//        bFlame = false;
+//    }
 
-    public void thrustOff() {
-        bThrusting = false;
-        bFlame = false;
-    }
-
-    private int adjustColor(int nCol, int nAdj) {
-        if (nCol - nAdj <= 0) {
-            return 0;
-        } else {
-            return nCol - nAdj;
-        }
-    }
+//    private int adjustColor(int nCol, int nAdj) {
+//        if (nCol - nAdj <= 0) {
+//            return 0;
+//        } else {
+//            return nCol - nAdj;
+//        }
+//    }
 
 //    //public void draw(Graphics g) {
 //
@@ -287,6 +454,34 @@ public class Pacman extends Sprite
     }
 
     public boolean getProtected() {return bProtected;}
-    public void setShield(int n) {nShield = n;}
-    public int getShield() {return nShield;}
+
+    public void setPacManSpeed(int nPacManSpeed)
+    {
+        this.nPacManSpeed = nPacManSpeed;
+    }
+
+    public Point getPacmanSpaceCoord()
+    {
+        Point pnt = getCenter();
+        int x = (pnt.x / TargetSpace.TS_WIDTH) + 1;
+        int y = (pnt.y / TargetSpace.TS_HEIGHT) + 1;
+        return new Point(x, y);
+    }
+
+    public int getPacManSpaceX()
+    {
+        return spaceX;
+    }
+
+    public int getPacManSpaceY()
+    {
+        return  spaceY;
+    }
+
+    public TargetSpace getPacManTarget()
+    {
+        Point pnt = getCenter();
+        return new TargetSpace((pnt.x /TargetSpace.TS_WIDTH) + 1, (pnt.y / TargetSpace.TS_HEIGHT) +1 );
+
+    }
 }

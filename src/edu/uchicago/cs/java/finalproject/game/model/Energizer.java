@@ -8,10 +8,16 @@ import java.util.ArrayList;
 /**
  * Created by pmnehls on 11/19/14.
  */
-public class Energizer extends Sprite implements Gridable
+public class Energizer extends Sprite
 {
-    public Energizer(int x, int y) {
+    private int nEnergizerX;
+    private int nEnergizerY;
+    public Energizer(int x, int y)
+    {
         super();
+
+        nEnergizerX = x;
+        nEnergizerY = y;
 
         ArrayList<Point> pntCs = new ArrayList<Point>();
 
@@ -26,7 +32,7 @@ public class Energizer extends Sprite implements Gridable
 
         assignPolarPoints(pntCs);
 
-        setColor(Color.GRAY);
+        setColor(new Color(200,200,200));
 
         int nHeight = TargetSpace.TS_HEIGHT;
         int nWidth = TargetSpace.TS_WIDTH;
@@ -41,5 +47,15 @@ public class Energizer extends Sprite implements Gridable
         super.draw(g);
         //fill this polygon (with whatever color it has)
         g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
+    }
+
+    public int getEnergizerX()
+    {
+        return nEnergizerX;
+    }
+
+    public int getEnergizerY()
+    {
+        return nEnergizerY;
     }
 }

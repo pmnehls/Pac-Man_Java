@@ -107,8 +107,10 @@ import edu.uchicago.cs.java.finalproject.game.model.Movable;
 			//friends will be on top layer and debris on the bottom
 			iterateMovables(grpOff, 
 					   CommandCenter.movDebris,
+                       CommandCenter.movDots,
 			           CommandCenter.movFloaters, 
 			           CommandCenter.movFoes,
+                       CommandCenter.movPacman,
 			           CommandCenter.movFriends);
 			
 			
@@ -186,7 +188,7 @@ import edu.uchicago.cs.java.finalproject.game.model.Movable;
 		//grpOff.drawString(strDisplay,
 		//		(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4);
 
-		strDisplay = "use the arrow keys to turn and thrust";
+		strDisplay = "use the arrow keys to turn Pac-Man, don't hold them down";
 		grpOff.drawString(strDisplay,
 				(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4
 						+ nFontHeight + 40);

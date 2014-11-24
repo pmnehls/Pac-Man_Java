@@ -6,11 +6,17 @@ import java.util.ArrayList;
 /**
  * Created by pmnehls on 11/19/14.
  */
-public class Dot extends Sprite implements Gridable
+public class Dot extends Sprite
 {
+    private int nDotX;
+    private int nDotY;
+
     public Dot(int x, int y)
     {
         super();
+
+        nDotX = x;
+        nDotY = y;
 
         ArrayList<Point> pntCs = new ArrayList<Point>();
 
@@ -42,5 +48,15 @@ public class Dot extends Sprite implements Gridable
         //now draw a white border
         //g.setColor(Color.WHITE);
         //g.drawPolygon(getXcoords(), getYcoords(), dDegrees.length);
+    }
+
+    public int getDotX()
+    {
+        return nDotX;
+    }
+
+    public int getDotY()
+    {
+        return nDotY;
     }
 }
