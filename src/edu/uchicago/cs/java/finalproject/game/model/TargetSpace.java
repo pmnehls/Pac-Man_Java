@@ -79,7 +79,7 @@ public class TargetSpace extends Sprite
             this.inside = new Wall(x ,y );
         }
 
-        pCenter = new Point(TS_HEIGHT * (y-1) + TS_HEIGHT/2, TS_WIDTH * (x-1) + TS_WIDTH/2);
+        pCenter = new Point(TS_HEIGHT * (x-1) + TS_HEIGHT/2, TS_WIDTH * (y-1) + TS_WIDTH/2);
         setCenter(new Point(pCenter));
 
     }
@@ -123,11 +123,9 @@ public class TargetSpace extends Sprite
         return inside;
     }
 
-    public Point getCenter()
+    public Point getTargetCenter()
     {
-        int x = nX * TS_WIDTH - (TS_WIDTH / 2);
-        int y = nY * TS_HEIGHT - (TS_HEIGHT / 2);
-        return new Point(x, y);
+        return pCenter;
     }
 
     public int getSpaceX()

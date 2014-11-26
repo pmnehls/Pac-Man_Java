@@ -5,20 +5,30 @@ import java.util.ArrayList;
 
 /**
  * Created by pmnehls on 11/21/14.
+ *
+ * Ghost Logic is true to the original Pac-Man game. This logic is available on various sites online,
+ * most references in this code come from http://home.comcast.net/~jpittman2/pacman/pacmandossier.html. All ghost logic
+ * code is original.
  */
+
 public class Blinky extends Sprite
 {
     private Point pBlinkyCenter;
     private Point pBlinkyCurrentSquare;
     private int nDirection; // 0- left, 1- up, 2- right, 3-down
-    private int nBlinkySpeed = 3;
+    private int nBlinkySpeed = 3; //note to change this below in tunnel checker
     private boolean bTurnsQueued;
     private boolean toTurnDown;
     private boolean toTurnLeft;
     private boolean toTurnUp;
     private boolean toTurnRight;
+    private boolean bFirstScatter = true;
     private int nXTurn;
     private int nYTurn;
+
+    //scatter target square information
+    private final Point scatterTargetPixel = new Point(TargetSpace.TS_HEIGHT*26 - TargetSpace.TS_HEIGHT/2,TargetSpace.TS_HEIGHT/2);
+    private final Point scatterTargetSquare = new Point(26, 1);
 
     public Blinky()
     {
@@ -26,53 +36,59 @@ public class Blinky extends Sprite
 
         ArrayList<Point> pntCs = new ArrayList<Point>();
 
-        pntCs.add(new Point(0, 1));
+//        pntCs.add(new Point(0, 1));
+//        pntCs.add(new Point(1, 1));
+//        pntCs.add(new Point(1, 0));
+//        pntCs.add(new Point(3, 0));
+//        pntCs.add(new Point(3, 1));
+//        pntCs.add(new Point(4, 1));
+//        pntCs.add(new Point(4, 2));
+//        pntCs.add(new Point(5, 2));
+//        pntCs.add(new Point(5, 1));
+//        pntCs.add(new Point(6, 1));
+//        pntCs.add(new Point(6, 0));
+//        pntCs.add(new Point(8, 0));
+//        pntCs.add(new Point(8, 1));
+//        pntCs.add(new Point(9, 1));
+//        pntCs.add(new Point(9, 2));
+//        pntCs.add(new Point(10, 2));
+//        pntCs.add(new Point(10, 1));
+//        pntCs.add(new Point(11, 1));
+//        pntCs.add(new Point(11, 0));
+//        pntCs.add(new Point(13, 0));
+//        pntCs.add(new Point(13, 1));
+//        pntCs.add(new Point(14, 1));
+//        pntCs.add(new Point(14, 8));
+//        pntCs.add(new Point(13, 8));
+//        pntCs.add(new Point(13, 11));
+//        pntCs.add(new Point(12, 11));
+//        pntCs.add(new Point(12, 12));
+//        pntCs.add(new Point(11, 12));
+//        pntCs.add(new Point(11, 13));
+//        pntCs.add(new Point(9, 13));
+//        pntCs.add(new Point(9, 14));
+//        pntCs.add(new Point(5, 14));
+//        pntCs.add(new Point(5, 13));
+//        pntCs.add(new Point(3, 13));
+//        pntCs.add(new Point(3, 12));
+//        pntCs.add(new Point(2, 12));
+//        pntCs.add(new Point(2, 11));
+//        pntCs.add(new Point(1, 11));
+//        pntCs.add(new Point(1, 8));
+//        pntCs.add(new Point(0, 8));
+
+        //test point
         pntCs.add(new Point(1, 1));
-        pntCs.add(new Point(1, 0));
-        pntCs.add(new Point(3, 0));
-        pntCs.add(new Point(3, 1));
-        pntCs.add(new Point(4, 1));
-        pntCs.add(new Point(4, 2));
-        pntCs.add(new Point(5, 2));
-        pntCs.add(new Point(5, 1));
-        pntCs.add(new Point(6, 1));
-        pntCs.add(new Point(6, 0));
-        pntCs.add(new Point(8, 0));
-        pntCs.add(new Point(8, 1));
-        pntCs.add(new Point(9, 1));
-        pntCs.add(new Point(9, 2));
-        pntCs.add(new Point(10, 2));
-        pntCs.add(new Point(10, 1));
-        pntCs.add(new Point(11, 1));
-        pntCs.add(new Point(11, 0));
-        pntCs.add(new Point(13, 0));
-        pntCs.add(new Point(13, 1));
-        pntCs.add(new Point(14, 1));
-        pntCs.add(new Point(14, 8));
-        pntCs.add(new Point(13, 8));
-        pntCs.add(new Point(13, 11));
-        pntCs.add(new Point(12, 11));
-        pntCs.add(new Point(12, 12));
-        pntCs.add(new Point(11, 12));
-        pntCs.add(new Point(11, 13));
-        pntCs.add(new Point(9, 13));
-        pntCs.add(new Point(9, 14));
-        pntCs.add(new Point(5, 14));
-        pntCs.add(new Point(5, 13));
-        pntCs.add(new Point(3, 13));
-        pntCs.add(new Point(3, 12));
-        pntCs.add(new Point(2, 12));
-        pntCs.add(new Point(2, 11));
-        pntCs.add(new Point(1, 11));
-        pntCs.add(new Point(1, 8));
-        pntCs.add(new Point(0, 8));
+        pntCs.add(new Point(1, -1));
+        pntCs.add(new Point(-1, -1));
+        pntCs.add(new Point(-1, 1));
 
         assignPolarPoints(pntCs);
 
         setColor(Color.RED);
 
-        pBlinkyCenter = new Point(TargetSpace.TS_WIDTH*(14)+ TargetSpace.TS_WIDTH/2,
-                TargetSpace.TS_HEIGHT*(15));
+        pBlinkyCenter = new Point(TargetSpace.TS_WIDTH*(14) - 1,
+                TargetSpace.TS_WIDTH*(14) + TargetSpace.TS_HEIGHT / 2);
 
         //put blinky in his start location
         setCenter(pBlinkyCenter);
@@ -83,7 +99,7 @@ public class Blinky extends Sprite
         //set initial direction (left)
         nDirection = 0;
 
-        setRadius(22);
+        setRadius(10);
 
 
     }
@@ -95,25 +111,40 @@ public class Blinky extends Sprite
         //get blinky Center
         Point pnt = getCenter();
 
+        //slow down if ghost is in tunnel
+        if (getBlinkySpaceCoord().y == 18 && (getBlinkySpaceCoord().x < 5 ||
+                getBlinkySpaceCoord().x >24))
+        {
+            nBlinkySpeed = 2;
+        }
+        else
+        {
+            nBlinkySpeed = 3;
+        }
+
         if (nDirection == 0) //moving left
         {
             setCenter(new Point(pnt.x-nBlinkySpeed, pnt.y));
         }
-        else if (nDirection == 1) //moving up
+
+        if (nDirection == 1) //moving up
         {
             setCenter(new Point(pnt.x, pnt.y-nBlinkySpeed));
         }
-        else if (nDirection == 2) //moving right
+
+        if (nDirection == 2) //moving right
         {
             setCenter(new Point(pnt.x+nBlinkySpeed, pnt.y));
         }
-        else if (nDirection == 3) //moving down
+
+        if (nDirection == 3) //moving down
         {
             setCenter(new Point(pnt.x, pnt.y+nBlinkySpeed));
         }
 
         if(toTurnDown)
         {
+
             if (nDirection == 0)
             {
                 if (pBlinkyCenter.x <= nXTurn)
@@ -138,13 +169,14 @@ public class Blinky extends Sprite
 
         if(toTurnUp)
         {
+
             if (nDirection == 0)
             {
                 if (pBlinkyCenter.x <= nXTurn)
                 {
                     nDirection = 1;
                     setCenter(new Point(nXTurn, pBlinkyCenter.y));
-                    toTurnDown = false;
+                    toTurnUp = false;
                     bTurnsQueued = false;
                 }
             }
@@ -154,7 +186,7 @@ public class Blinky extends Sprite
                 {
                     nDirection = 1;
                     setCenter(new Point(nXTurn, pBlinkyCenter.y));
-                    toTurnDown = false;
+                    toTurnUp = false;
                     bTurnsQueued = false;
                 }
             }
@@ -192,17 +224,17 @@ public class Blinky extends Sprite
                 {
                     nDirection = 0;
                     setCenter(new Point(pBlinkyCenter.x, nYTurn));
-                    toTurnRight = false;
+                    toTurnLeft = false;
                     bTurnsQueued = false;
                 }
             }
-            else if (nDirection == 3)
+            if (nDirection == 3)
             {
                 if (pBlinkyCenter.y >= nYTurn)
                 {
                     nDirection = 0;
                     setCenter(new Point(pBlinkyCenter.x, nYTurn));
-                    toTurnRight = false;
+                    toTurnLeft = false;
                     bTurnsQueued = false;
                 }
             }
@@ -218,6 +250,12 @@ public class Blinky extends Sprite
 
     public void scatter()
     {
+        //reverses ghost direction if the scatter call is not the initial scatter
+        if (!bFirstScatter)
+        {
+            nDirection = (nDirection + 2) % 4;
+        }
+
 
     }
 
@@ -249,32 +287,29 @@ public class Blinky extends Sprite
 
         if (nDirection == 0 && !bTurnsQueued)
         {
-
             //first handle cases with no choice to be made
 
             if (LU.getIsWall() && L.getIsWall() && !DL.getIsWall()) // turn down at corner
             {
                 toTurnDown = true;
                 bTurnsQueued = true;
-                System.out.println("turn down trigger");
-                Point turn = AL.getCenter();
-                nXTurn = turn.x + TargetSpace.TS_WIDTH / 2;  //check why this needs to be added
+                Point turn = AL.getTargetCenter();
+                nXTurn = turn.x; //+ TargetSpace.TS_WIDTH / 2;  //DEBUG check why this needs to be added
 
             }
-            else if (DL.getIsWall() && L.getIsWall()) // turn up at corner
+            if (DL.getIsWall() && L.getIsWall() && !LU.getIsWall()) // turn up at corner
             {
                 toTurnUp = true;
                 bTurnsQueued = true;
-                System.out.println("turn up trigger");
-                Point turn = AL.getCenter();
-                nXTurn = turn.x + TargetSpace.TS_WIDTH / 2;
+                Point turn = AL.getTargetCenter();
+                nXTurn = turn.x;
             }
-            else if (L.getIsWall() && !LU.getIsWall() && !DL.getIsWall()) //handle two way intersection with wall in front
+            if (L.getIsWall() && !LU.getIsWall() && !DL.getIsWall()) //handle two way intersection with wall in front
             {
                 // get center point of both possible squares to go to
-                Point option1 = LU.getCenter();
-                Point option2 = DL.getCenter();
-                Point target = pacSquare.getCenter();
+                Point option1 = LU.getTargetCenter();
+                Point option2 = DL.getTargetCenter();
+                Point target = pacSquare.getTargetCenter();
                 double dist1 = getDistance(option1, target);
                 double dist2 = getDistance(option2, target);
 
@@ -282,26 +317,24 @@ public class Blinky extends Sprite
                 {
                     toTurnUp = true;
                     bTurnsQueued = true;
-                    System.out.println("turn up trigger");
-                    Point turn = AL.getCenter();
-                    nXTurn = turn.x + TargetSpace.TS_WIDTH / 2;
+                    Point turn = AL.getTargetCenter();
+                    nXTurn = turn.x;
                 }
                 else
                 {
                     toTurnDown = true;
                     bTurnsQueued = true;
-                    System.out.println("turn down trigger");
-                    Point turn = AL.getCenter();
-                    nXTurn = turn.x + TargetSpace.TS_WIDTH / 2;
+                    Point turn = AL.getTargetCenter();
+                    nXTurn = turn.x;
                 }
 
             }
-            else if (DL.getIsWall() && !L.getIsWall() && !LU.getIsWall()) //handle 3way junction up/left
+            if (DL.getIsWall() && !L.getIsWall() && !LU.getIsWall()) //handle 3way junction up/left
             {
                 // get center point of both possible squares to go to
-                Point option1 = LU.getCenter();
-                Point option2 = L.getCenter();
-                Point target = pacSquare.getCenter();
+                Point option1 = LU.getTargetCenter();
+                Point option2 = L.getTargetCenter();
+                Point target = pacSquare.getTargetCenter();
                 double dist1 = getDistance(option1, target);
                 double dist2 = getDistance(option2, target);
 
@@ -309,17 +342,16 @@ public class Blinky extends Sprite
                 {
                     toTurnUp = true;
                     bTurnsQueued = true;
-                    System.out.println("turn up trigger");
-                    Point turn = AL.getCenter();
-                    nXTurn = turn.x + TargetSpace.TS_WIDTH / 2;
+                    Point turn = AL.getTargetCenter();
+                    nXTurn = turn.x;
                 }
             }
-            else if (!DL.getIsWall() && !L.getIsWall() && LU.getIsWall()) //handle 3way junction down/left
+            if (!DL.getIsWall() && !L.getIsWall() && LU.getIsWall()) //handle 3way junction down/left
             {
                 // get center point of both possible squares to go to
-                Point option1 = DL.getCenter();
-                Point option2 = L.getCenter();
-                Point target = pacSquare.getCenter();
+                Point option1 = DL.getTargetCenter();
+                Point option2 = L.getTargetCenter();
+                Point target = pacSquare.getTargetCenter();
                 double dist1 = getDistance(option1, target);
                 double dist2 = getDistance(option2, target);
 
@@ -327,17 +359,16 @@ public class Blinky extends Sprite
                 {
                     toTurnDown = true;
                     bTurnsQueued = true;
-                    System.out.println("turn down trigger");
-                    Point turn = AL.getCenter();
-                    nXTurn = turn.x + TargetSpace.TS_WIDTH / 2;
+                    Point turn = AL.getTargetCenter();
+                    nXTurn = turn.x;
                 }
             }
-            else if (!L.getIsWall() && !LU.getIsWall() && !DL.getIsWall()) // 4 way intersection
+            if (!L.getIsWall() && !LU.getIsWall() && !DL.getIsWall()) // 4 way intersection
             {
-                Point option1 = LU.getCenter();
-                Point option2 = DL.getCenter();
-                Point option3 = L.getCenter();
-                Point target = pacSquare.getCenter();
+                Point option1 = LU.getTargetCenter();
+                Point option2 = DL.getTargetCenter();
+                Point option3 = L.getTargetCenter();
+                Point target = pacSquare.getTargetCenter();
                 double dist1 = getDistance(option1, target);
                 double dist2 = getDistance(option2, target);
                 double dist3 = getDistance(option3, target);
@@ -346,46 +377,42 @@ public class Blinky extends Sprite
                 {
                     toTurnUp = true;
                     bTurnsQueued = true;
-                    System.out.println("turn up trigger");
-                    Point turn = AL.getCenter();
-                    nXTurn = turn.x + TargetSpace.TS_WIDTH / 2;
+                    Point turn = AL.getTargetCenter();
+                    nXTurn = turn.x;
                 }
                 else if (dist2 < dist1 && dist2 < dist3)
                 {
                     toTurnDown = true;
                     bTurnsQueued = true;
-                    System.out.println("turn down trigger");
-                    Point turn = AL.getCenter();
-                    nXTurn = turn.x + TargetSpace.TS_WIDTH / 2;
+                    Point turn = AL.getTargetCenter();
+                    nXTurn = turn.x;
                 }
 
             }
 
         }
-        else if (nDirection == 1 && !bTurnsQueued)
+        if (nDirection == 1 && !bTurnsQueued)
         {
             //first handle no choice turns
             if(LU.getIsWall() && U.getIsWall() && !UR.getIsWall()) // turn right at corner
             {
                 toTurnRight = true;
                 bTurnsQueued = true;
-                System.out.println("turn right trigger");
-                Point turn = AU.getCenter();
-                nYTurn = turn.y + TargetSpace.TS_HEIGHT / 2;
+                Point turn = AU.getTargetCenter();
+                nYTurn = turn.y;
             }
-            else if(U.getIsWall() && UR.getIsWall() && !LU.getIsWall()) // turn left at corner
+            if(U.getIsWall() && UR.getIsWall() && !LU.getIsWall()) // turn left at corner
             {
                 toTurnLeft = true;
                 bTurnsQueued = true;
-                System.out.println("turn left trigger");
-                Point turn = AU.getCenter();
-                nYTurn = turn.y + TargetSpace.TS_HEIGHT / 2;
+                Point turn = AU.getTargetCenter();
+                nYTurn = turn.y;
             }
-            else if(U.getIsWall() && !LU.getIsWall() && !UR.getIsWall())//T intersection
+            if(U.getIsWall() && !LU.getIsWall() && !UR.getIsWall())//T intersection
             {
-                Point option1 = LU.getCenter();
-                Point option2 = UR.getCenter();
-                Point target = pacSquare.getCenter();
+                Point option1 = LU.getTargetCenter();
+                Point option2 = UR.getTargetCenter();
+                Point target = pacSquare.getTargetCenter();
                 double dist1 = getDistance(option1, target);
                 double dist2 = getDistance(option2, target);
 
@@ -393,24 +420,22 @@ public class Blinky extends Sprite
                 {
                     toTurnLeft = true;
                     bTurnsQueued = true;
-                    System.out.println("turn left trigger");
-                    Point turn = AU.getCenter();
-                    nYTurn = turn.y + TargetSpace.TS_HEIGHT / 2;
+                    Point turn = AU.getTargetCenter();
+                    nYTurn = turn.y;
                 }
                 else
                 {
                     toTurnRight = true;
                     bTurnsQueued = true;
-                    System.out.println("turn right trigger");
-                    Point turn = AU.getCenter();
-                    nYTurn = turn.y + TargetSpace.TS_HEIGHT / 2;
+                    Point turn = AU.getTargetCenter();
+                    nYTurn = turn.y;
                 }
             }
-            else if(LU.getIsWall() && !U.getIsWall() && !UR.getIsWall())//3way intersection up, right
+            if(LU.getIsWall() && !U.getIsWall() && !UR.getIsWall())//3way intersection up, right
             {
-                Point option1 = U.getCenter();
-                Point option2 = UR.getCenter();
-                Point target = pacSquare.getCenter();
+                Point option1 = U.getTargetCenter();
+                Point option2 = UR.getTargetCenter();
+                Point target = pacSquare.getTargetCenter();
                 double dist1 = getDistance(option1, target);
                 double dist2 = getDistance(option2, target);
 
@@ -418,34 +443,32 @@ public class Blinky extends Sprite
                 {
                     toTurnRight = true;
                     bTurnsQueued = true;
-                    System.out.println("turn right trigger");
-                    Point turn = AU.getCenter();
-                    nYTurn = turn.y + TargetSpace.TS_HEIGHT / 2;
+                    Point turn = AU.getTargetCenter();
+                    nYTurn = turn.y;
                 }
             }
-            else if(!LU.getIsWall() && !U.getIsWall() && UR.getIsWall())//3way intersection up, left
+            if(!LU.getIsWall() && !U.getIsWall() && UR.getIsWall())//3way intersection up, left
             {
-                Point option1 = LU.getCenter();
-                Point option2 = U.getCenter();
-                Point target = pacSquare.getCenter();
+                Point option1 = LU.getTargetCenter();
+                Point option2 = U.getTargetCenter();
+                Point target = pacSquare.getTargetCenter();
                 double dist1 = getDistance(option1, target);
                 double dist2 = getDistance(option2, target);
 
-                if (dist1 > dist2)
+                if (dist1 < dist2)
                 {
                     toTurnLeft = true;
                     bTurnsQueued = true;
-                    System.out.println("turn left trigger");
-                    Point turn = AU.getCenter();
-                    nYTurn = turn.y + TargetSpace.TS_HEIGHT / 2;
+                    Point turn = AU.getTargetCenter();
+                    nYTurn = turn.y;
                 }
             }
-            else if (!LU.getIsWall() && !U.getIsWall() && !UR.getIsWall()) //4way intersection
+            if (!LU.getIsWall() && !U.getIsWall() && !UR.getIsWall()) //4way intersection
             {
-                Point option1 = LU.getCenter();
-                Point option2 = UR.getCenter();
-                Point option3 = U.getCenter();
-                Point target = pacSquare.getCenter();
+                Point option1 = LU.getTargetCenter();
+                Point option2 = UR.getTargetCenter();
+                Point option3 = U.getTargetCenter();
+                Point target = pacSquare.getTargetCenter();
                 double dist1 = getDistance(option1, target);
                 double dist2 = getDistance(option2, target);
                 double dist3 = getDistance(option3, target);
@@ -454,44 +477,40 @@ public class Blinky extends Sprite
                 {
                     toTurnLeft = true;
                     bTurnsQueued = true;
-                    System.out.println("turn left trigger");
-                    Point turn = AU.getCenter();
-                    nYTurn = turn.y + TargetSpace.TS_HEIGHT / 2;
+                    Point turn = AU.getTargetCenter();
+                    nYTurn = turn.y;
                 }
                 else if (dist2 < dist1 && dist2 < dist3)
                 {
                     toTurnRight = true;
                     bTurnsQueued = true;
-                    System.out.println("turn right trigger");
-                    Point turn = AU.getCenter();
-                    nYTurn = turn.y + TargetSpace.TS_HEIGHT / 2;
+                    Point turn = AU.getTargetCenter();
+                    nYTurn = turn.y;
                 }
             }
 
         }
-        else if (nDirection == 2 && !bTurnsQueued)
+        if (nDirection == 2 && !bTurnsQueued)
         {
             if(RD.getIsWall() && R.getIsWall() && !UR.getIsWall())//turn up at corner
             {
                 toTurnUp = true;
                 bTurnsQueued = true;
-                System.out.println("turn up trigger");
-                Point turn = AR.getCenter();
-                nXTurn = turn.x + TargetSpace.TS_WIDTH / 2;
+                Point turn = AR.getTargetCenter();
+                nXTurn = turn.x;
             }
-            else if(UR.getIsWall() && R.getIsWall() && !RD.getIsWall())//turn down at corner
+            if(UR.getIsWall() && R.getIsWall() && !RD.getIsWall())//turn down at corner
             {
                 toTurnDown = true;
                 bTurnsQueued = true;
-                System.out.println("turn down trigger");
-                Point turn = AR.getCenter();
-                nXTurn = turn.x + TargetSpace.TS_WIDTH / 2;
+                Point turn = AR.getTargetCenter();
+                nXTurn = turn.x;
             }
-            else if(R.getIsWall() && !UR.getIsWall() && !RD.getIsWall()) //T intersection
+            if(R.getIsWall() && !UR.getIsWall() && !RD.getIsWall()) //T intersection
             {
-                Point option1 = UR.getCenter();
-                Point option2 = RD.getCenter();
-                Point target = pacSquare.getCenter();
+                Point option1 = UR.getTargetCenter();
+                Point option2 = RD.getTargetCenter();
+                Point target = pacSquare.getTargetCenter();
                 double dist1 = getDistance(option1, target);
                 double dist2 = getDistance(option2, target);
 
@@ -499,24 +518,22 @@ public class Blinky extends Sprite
                 {
                     toTurnUp = true;
                     bTurnsQueued = true;
-                    System.out.println("turn up trigger");
-                    Point turn = AR.getCenter();
-                    nXTurn = turn.x + TargetSpace.TS_WIDTH / 2;
+                    Point turn = AR.getTargetCenter();
+                    nXTurn = turn.x;
                 }
                 else
                 {
                     toTurnDown = true;
                     bTurnsQueued = true;
-                    System.out.println("turn down trigger");
-                    Point turn = AR.getCenter();
-                    nXTurn = turn.x + TargetSpace.TS_WIDTH / 2;
+                    Point turn = AR.getTargetCenter();
+                    nXTurn = turn.x;
                 }
             }
-            else if (RD.getIsWall() && !R.getIsWall() && !UR.getIsWall())//3 way right up
+            if (RD.getIsWall() && !R.getIsWall() && !UR.getIsWall())//3 way right up
             {
-                Point option1 = UR.getCenter();
-                Point option2 = R.getCenter();
-                Point target = pacSquare.getCenter();
+                Point option1 = UR.getTargetCenter();
+                Point option2 = R.getTargetCenter();
+                Point target = pacSquare.getTargetCenter();
                 double dist1 = getDistance(option1, target);
                 double dist2 = getDistance(option2, target);
 
@@ -524,16 +541,15 @@ public class Blinky extends Sprite
                 {
                     toTurnUp = true;
                     bTurnsQueued = true;
-                    System.out.println("turn up trigger");
-                    Point turn = AR.getCenter();
-                    nXTurn = turn.x + TargetSpace.TS_WIDTH / 2;
+                    Point turn = AR.getTargetCenter();
+                    nXTurn = turn.x;
                 }
             }
-            else if (UR.getIsWall() && !R.getIsWall() && !RD.getIsWall())//3 way right down
+            if (UR.getIsWall() && !R.getIsWall() && !RD.getIsWall())//3 way right down
             {
-                Point option1 = RD.getCenter();
-                Point option2 = R.getCenter();
-                Point target = pacSquare.getCenter();
+                Point option1 = RD.getTargetCenter();
+                Point option2 = R.getTargetCenter();
+                Point target = pacSquare.getTargetCenter();
                 double dist1 = getDistance(option1, target);
                 double dist2 = getDistance(option2, target);
 
@@ -541,17 +557,16 @@ public class Blinky extends Sprite
                 {
                     toTurnDown = true;
                     bTurnsQueued = true;
-                    System.out.println("turn down trigger");
-                    Point turn = AR.getCenter();
-                    nXTurn = turn.x + TargetSpace.TS_WIDTH / 2;
+                    Point turn = AR.getTargetCenter();
+                    nXTurn = turn.x;
                 }
             }
-            else if (!UR.getIsWall() && !R.getIsWall() && !RD.getIsWall()) //4way intersection
+            if (!UR.getIsWall() && !R.getIsWall() && !RD.getIsWall()) //4way intersection
             {
-                Point option1 = UR.getCenter();
-                Point option2 = RD.getCenter();
-                Point option3 = R.getCenter();
-                Point target = pacSquare.getCenter();
+                Point option1 = UR.getTargetCenter();
+                Point option2 = RD.getTargetCenter();
+                Point option3 = R.getTargetCenter();
+                Point target = pacSquare.getTargetCenter();
                 double dist1 = getDistance(option1, target);
                 double dist2 = getDistance(option2, target);
                 double dist3 = getDistance(option3, target);
@@ -560,43 +575,39 @@ public class Blinky extends Sprite
                 {
                     toTurnUp = true;
                     bTurnsQueued = true;
-                    System.out.println("turn up trigger");
-                    Point turn = AR.getCenter();
-                    nXTurn = turn.x + TargetSpace.TS_WIDTH / 2;
+                    Point turn = AR.getTargetCenter();
+                    nXTurn = turn.x;
                 }
                 else if (dist2 < dist1 && dist2 < dist3)
                 {
                     toTurnDown = true;
                     bTurnsQueued = true;
-                    System.out.println("turn down trigger");
-                    Point turn = AR.getCenter();
-                    nXTurn = turn.x + TargetSpace.TS_WIDTH / 2;
+                    Point turn = AR.getTargetCenter();
+                    nXTurn = turn.x;
                 }
             }
         }
-        else if (nDirection == 3 && !bTurnsQueued)
+        if (nDirection == 3 && !bTurnsQueued)
         {
             if(RD.getIsWall() && D.getIsWall() && !DL.getIsWall()) //turn left at corner
             {
                 toTurnLeft = true;
                 bTurnsQueued = true;
-                System.out.println("turn left trigger");
-                Point turn = AD.getCenter();
-                nYTurn = turn.y + TargetSpace.TS_HEIGHT / 2;
+                Point turn = AD.getTargetCenter();
+                nYTurn = turn.y;  //CHANGED TO DEBUG
             }
-            else if (DL.getIsWall() && D.getIsWall() && !RD.getIsWall()) //turn right at corner
+            if (DL.getIsWall() && D.getIsWall() && !RD.getIsWall()) //turn right at corner
             {
                 toTurnRight = true;
                 bTurnsQueued = true;
-                System.out.println("turn right trigger");
-                Point turn = AD.getCenter();
-                nYTurn = turn.y + TargetSpace.TS_HEIGHT / 2;
+                Point turn = AD.getTargetCenter();
+                nYTurn = turn.y;
             }
-            else if (D.getIsWall() && !RD.getIsWall() && !DL.getIsWall()) // T intersection
+            if (D.getIsWall() && !RD.getIsWall() && !DL.getIsWall()) // T intersection
             {
-                Point option1 = DL.getCenter();
-                Point option2 = RD.getCenter();
-                Point target = pacSquare.getCenter();
+                Point option1 = DL.getTargetCenter();
+                Point option2 = RD.getTargetCenter();
+                Point target = pacSquare.getTargetCenter();
                 double dist1 = getDistance(option1, target);
                 double dist2 = getDistance(option2, target);
 
@@ -604,24 +615,22 @@ public class Blinky extends Sprite
                 {
                     toTurnLeft = true;
                     bTurnsQueued = true;
-                    System.out.println("turn left trigger");
-                    Point turn = AD.getCenter();
-                    nYTurn = turn.y + TargetSpace.TS_HEIGHT / 2;
+                    Point turn = AD.getTargetCenter();
+                    nYTurn = turn.y; //DEBUG
                 }
                 else
                 {
                     toTurnRight = true;
                     bTurnsQueued = true;
-                    System.out.println("turn right trigger");
-                    Point turn = AD.getCenter();
-                    nYTurn = turn.y + TargetSpace.TS_HEIGHT / 2;
+                    Point turn = AD.getTargetCenter();
+                    nYTurn = turn.y; //debug
                 }
             }
-            else if (DL.getIsWall() && !D.getIsWall() && !RD.getIsWall()) //3 way intersection down right
+            if (DL.getIsWall() && !D.getIsWall() && !RD.getIsWall()) //3 way intersection down right
             {
-                Point option1 = RD.getCenter();
-                Point option2 = D.getCenter();
-                Point target = pacSquare.getCenter();
+                Point option1 = RD.getTargetCenter();
+                Point option2 = D.getTargetCenter();
+                Point target = pacSquare.getTargetCenter();
                 double dist1 = getDistance(option1, target);
                 double dist2 = getDistance(option2, target);
 
@@ -629,16 +638,15 @@ public class Blinky extends Sprite
                 {
                     toTurnRight = true;
                     bTurnsQueued = true;
-                    System.out.println("turn right trigger");
-                    Point turn = AD.getCenter();
-                    nYTurn = turn.y + TargetSpace.TS_HEIGHT / 2;
+                    Point turn = AD.getTargetCenter();
+                    nYTurn = turn.y;
                 }
             }
-            else if (!DL.getIsWall() && !D.getIsWall() && RD.getIsWall()) //3 way intersection down left
+            if (!DL.getIsWall() && !D.getIsWall() && RD.getIsWall()) //3 way intersection down left
             {
-                Point option1 = DL.getCenter();
-                Point option2 = D.getCenter();
-                Point target = pacSquare.getCenter();
+                Point option1 = DL.getTargetCenter();
+                Point option2 = D.getTargetCenter();
+                Point target = pacSquare.getTargetCenter();
                 double dist1 = getDistance(option1, target);
                 double dist2 = getDistance(option2, target);
 
@@ -646,17 +654,16 @@ public class Blinky extends Sprite
                 {
                     toTurnLeft = true;
                     bTurnsQueued = true;
-                    System.out.println("turn left trigger");
-                    Point turn = AD.getCenter();
-                    nYTurn = turn.y + TargetSpace.TS_HEIGHT / 2;
+                    Point turn = AD.getTargetCenter();
+                    nYTurn = turn.y;
                 }
             }
-            else if (!DL.getIsWall() && !D.getIsWall() && !RD.getIsWall()) //4 way intersection
+            if (!DL.getIsWall() && !D.getIsWall() && !RD.getIsWall()) //4 way intersection
             {
-                Point option1 = DL.getCenter();
-                Point option2 = RD.getCenter();
-                Point option3 = D.getCenter();
-                Point target = pacSquare.getCenter();
+                Point option1 = DL.getTargetCenter();
+                Point option2 = RD.getTargetCenter();
+                Point option3 = D.getTargetCenter();
+                Point target = pacSquare.getTargetCenter();
                 double dist1 = getDistance(option1, target);
                 double dist2 = getDistance(option2, target);
                 double dist3 = getDistance(option3, target);
@@ -665,17 +672,15 @@ public class Blinky extends Sprite
                 {
                     toTurnLeft = true;
                     bTurnsQueued = true;
-                    System.out.println("turn left trigger");
-                    Point turn = AD.getCenter();
-                    nYTurn = turn.y + TargetSpace.TS_HEIGHT / 2;
+                    Point turn = AD.getTargetCenter();
+                    nYTurn = turn.y;
                 }
                 else if (dist2 < dist1 && dist2 < dist3)
                 {
                     toTurnRight = true;
                     bTurnsQueued = true;
-                    System.out.println("turn right trigger");
-                    Point turn = AD.getCenter();
-                    nYTurn = turn.y + TargetSpace.TS_HEIGHT / 2;
+                    Point turn = AD.getTargetCenter();
+                    nYTurn = turn.y;
                 }
             }
         }
@@ -696,8 +701,8 @@ public class Blinky extends Sprite
     public Point getBlinkySpaceCoord()
     {
         Point pnt = getCenter();
-        int x = (pnt.x / TargetSpace.TS_WIDTH);
-        int y = (pnt.y / TargetSpace.TS_HEIGHT);
+        int x = (pnt.x / TargetSpace.TS_WIDTH) + 1;
+        int y = (pnt.y / TargetSpace.TS_HEIGHT) + 1;
         return new Point(x, y);
     }
 

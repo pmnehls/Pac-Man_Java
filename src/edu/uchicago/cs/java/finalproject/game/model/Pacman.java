@@ -18,31 +18,31 @@ public class Pacman extends Sprite
     // FIELDS
     // ==============================================================
 
-    private final double THRUST = .65;
+    //private final double THRUST = .65;
 
-    final int DEGREE_STEP = 7;
+    //final int DEGREE_STEP = 7;
 
-    private boolean bShield = false;
-    private boolean bFlame = false;
-    private boolean bProtected; //for fade in and out
+    //private boolean bShield = false;
+    //private boolean bFlame = false;
+    //private boolean bProtected; //for fade in and out
 
-    private boolean bThrusting = false;
-    private boolean bTurningRight = false;
-    private boolean bTurningLeft = false;
+   // private boolean bThrusting = false;
+    //private boolean bTurningRight = false;
+    //private boolean bTurningLeft = false;
 
-    private boolean bFacingLeft = true;
-    private boolean bFacingRight = false;
-    private boolean bFacingUp = false;
-    private boolean bFacingDown = false;
+    //private boolean bFacingLeft = true;
+    //private boolean bFacingRight = false;
+    //private boolean bFacingUp = false;
+    //private boolean bFacingDown = false;
 
     private Clip clpWakawaka;
 
     //private TargetSpace currentSpace;
     private int spaceX;
     private int spaceY;
-    private double dPacManSpeed = 4.0;
+    //private double dPacManSpeed = 4.0;
     private int nPacManSpeed = 3;
-    private int nShield;
+    //private int nShield;
 
     private final double[] FLAME = { 23 * Math.PI / 24 + Math.PI / 2,
             Math.PI + Math.PI / 2, 25 * Math.PI / 24 + Math.PI / 2 };
@@ -142,43 +142,42 @@ public class Pacman extends Sprite
                 break;
         }
 
-        if (CommandCenter.grid[spaceX][spaceY].getIsDot())
+        if (CommandCenter.grid[spaceX-1][spaceY-1].getIsDot())
         {
             clpWakawaka.loop(2);
-            //Sound.playSound("pacman_chomp.wav");
-            CommandCenter.grid[spaceX][spaceY].setIsDot(false);
+            CommandCenter.grid[spaceX-1][spaceY-1].setIsDot(false);
         }
 
         //if (currentSpace.getIsEnergizer())
-        {
-
-        }
-        if (bFacingLeft)
-        {
-           super.setCenter(getCenter());
-        }
-        if (bThrusting) {
-            bFlame = true;
-            double dAdjustX = Math.cos(Math.toRadians(getOrientation()))
-                    * THRUST;
-            double dAdjustY = Math.sin(Math.toRadians(getOrientation()))
-                    * THRUST;
-            setDeltaX(getDeltaX() + dAdjustX);
-            setDeltaY(getDeltaY() + dAdjustY);
-        }
-        if (bTurningLeft) {
-
-            if (getOrientation() <= 0 && bTurningLeft) {
-                setOrientation(360);
-            }
-            setOrientation(getOrientation() - DEGREE_STEP);
-        }
-        if (bTurningRight) {
-            if (getOrientation() >= 360 && bTurningRight) {
-                setOrientation(0);
-            }
-            setOrientation(getOrientation() + DEGREE_STEP);
-        }
+//        {
+//
+//        }
+//        if (bFacingLeft)
+//        {
+//           super.setCenter(getCenter());
+//        }
+//        if (bThrusting) {
+//            bFlame = true;
+//            double dAdjustX = Math.cos(Math.toRadians(getOrientation()))
+//                    * THRUST;
+//            double dAdjustY = Math.sin(Math.toRadians(getOrientation()))
+//                    * THRUST;
+//            setDeltaX(getDeltaX() + dAdjustX);
+//            setDeltaY(getDeltaY() + dAdjustY);
+//        }
+//        if (bTurningLeft) {
+//
+//            if (getOrientation() <= 0 && bTurningLeft) {
+//                setOrientation(360);
+//            }
+//            setOrientation(getOrientation() - DEGREE_STEP);
+//        }
+//        if (bTurningRight) {
+//            if (getOrientation() >= 360 && bTurningRight) {
+//                setOrientation(0);
+//            }
+//            setOrientation(getOrientation() + DEGREE_STEP);
+//        }
     } //end move
 
     public void moveLeft()
@@ -318,18 +317,6 @@ public class Pacman extends Sprite
 
         }
     }
-    public void rotateLeft() {
-        bTurningLeft = true;
-    }
-
-    public void rotateRight() {
-        bTurningRight = true;
-    }
-
-    public void stopRotating() {
-        bTurningRight = false;
-        bTurningLeft = false;
-    }
 
 //    public void thrustOn() {
 //        bThrusting = true;
@@ -422,29 +409,29 @@ public class Pacman extends Sprite
 //        g.drawPolygon(getXcoords(), getYcoords(), dDegrees.length);
 //    }
 
-    public void fadeInOut() {
-        if (getProtected()) {
-            setFadeValue(getFadeValue() + 3);
-        }
-        if (getFadeValue() == 255) {
-            setProtected(false);
-        }
-    }
+    //public void fadeInOut() {
+//        if (getProtected()) {
+//            setFadeValue(getFadeValue() + 3);
+//        }
+//        if (getFadeValue() == 255) {
+//            setProtected(false);
+//        }
+    //}
 
     public void setProtected(boolean bParam) {
-        if (bParam) {
-            setFadeValue(0);
-        }
-        bProtected = bParam;
+    //    if (bParam) {
+    //        setFadeValue(0);
+    //    }
+    //    bProtected = bParam;
     }
 
     public void setProtected(boolean bParam, int n) {
-        if (bParam && n % 3 == 0) {
-            setFadeValue(n);
-        } else if (bParam) {
-            setFadeValue(0);
-        }
-        bProtected = bParam;
+    //    if (bParam && n % 3 == 0) {
+    //        setFadeValue(n);
+    //    } else if (bParam) {
+    //        setFadeValue(0);
+    //    }
+    //    bProtected = bParam;
     }
 
     public void draw(Graphics g)
@@ -453,7 +440,8 @@ public class Pacman extends Sprite
         g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
     }
 
-    public boolean getProtected() {return bProtected;}
+    //public boolean getProtected() {//return bProtected;
+    //}
 
     public void setPacManSpeed(int nPacManSpeed)
     {

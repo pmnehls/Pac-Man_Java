@@ -30,10 +30,8 @@ public class Wall extends Sprite
 
         setColor(Color.BLUE);
 
-        int nHeight = TargetSpace.TS_HEIGHT;
-        int nWidth = TargetSpace.TS_WIDTH;
-
-        setCenter(new Point(nHeight * (x - 1) + nHeight/2, nWidth * (y - 1) + nWidth/2));
+        setCenter(new Point(TargetSpace.TS_WIDTH * x - TargetSpace.TS_WIDTH/2,
+                TargetSpace.TS_HEIGHT* y - TargetSpace.TS_HEIGHT/2));
 
         setRadius(6);
     }

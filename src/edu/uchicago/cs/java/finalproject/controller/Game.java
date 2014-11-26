@@ -49,8 +49,9 @@ public class Game implements Runnable, KeyListener {
 											// updates (animation)
 	private Thread thrAnim;
 	private int nLevel = 1;
-	private int nTick = 0;
-    private int nDotCounter = 0;
+	private static int nTick = 0;
+    private static int nDotCounter = 0;
+    private static int nScore = 0;
 	private ArrayList<Tuple> tupMarkForRemovals;
 	private ArrayList<Tuple> tupMarkForAdds;
 	private boolean bMuted = true;
@@ -189,12 +190,13 @@ public class Game implements Runnable, KeyListener {
                 Point pntPacman = pacman.getCenter();
                 Point pntDot = dot.getCenter();
 
-                if (Math.abs(pntPacman.x - pntDot.x) < 4)
+                if (Math.abs(pntPacman.x - pntDot.x) < 6)
                 {
-                    if (Math.abs(pntPacman.y - pntDot.y) < 4)
+                    if (Math.abs(pntPacman.y - pntDot.y) < 6)
                     {
                         tupMarkForRemovals.add(new Tuple(CommandCenter.movDots, dot));
                         nDotCounter += 1;
+                        System.out.println(nDotCounter);
                     }
                 }
 
@@ -382,7 +384,35 @@ public class Game implements Runnable, KeyListener {
 	}
 	
 	
-	
+	public static int getnTick()
+    {
+        return nTick;
+    }
+
+    public static int getDotCounter()
+    {
+        return nDotCounter;
+    }
+
+    public static void setDotCounter(int nDotCounter)
+    {
+        Game.nDotCounter = nDotCounter;
+    }
+
+    public static int getScore()
+    {
+        return nScore;
+    }
+
+    public static void setScore(int nScore)
+    {
+        Game.nScore = nScore;
+    }
+
+
+
+
+
 
 	// Varargs for stopping looping-music-clips
 	private static void stopLoopingSounds(Clip... clpClips) {
@@ -494,54 +524,9 @@ public class Game implements Runnable, KeyListener {
 	// Just need it b/c of KeyListener implementation
 	public void keyTyped(KeyEvent e)
     {
-//        Pacman pacman = CommandCenter.getPacman();
-//        int nKey = e.getKeyCode();
-//        // System.out.println(nKey);
-//
-//        if (nKey == START && !CommandCenter.isPlaying())
-//            startGame();
-//
-//        if (pacman != null) {
-//
-//            switch (nKey) {
-//                case PAUSE:
-//                    CommandCenter.setPaused(!CommandCenter.isPaused());
-//                    if (CommandCenter.isPaused())
-//                        stopLoopingSounds(clpMusicBackground, clpThrust);
-//                    else
-//                        clpMusicBackground.loop(Clip.LOOP_CONTINUOUSLY);
-//                    break;
-//                case QUIT:
-//                    System.exit(0);
-//                    break;
-//                case UP:
-//                    pacman.turnUp();
-//                    if (!CommandCenter.isPaused())
-//                        clpThrust.loop(Clip.LOOP_CONTINUOUSLY);
-//                    break;
-//                case LEFT:
-//                    pacman.turnLeft();
-//                    break;
-//                case RIGHT:
-//                    pacman.turnRight();
-//                    break;
-//                case DOWN:
-//                    pacman.turnDown();
-//                    break;
-//
-//                // possible future use
-//                // case KILL:
-//                // case SHIELD:
-//                // case NUM_ENTER:
-//
-//                default:
-//                    break;
-//            }
-//        }
-	}
-	
 
-	
+	}
+
 }
 
 // ===============================================
@@ -569,4 +554,8 @@ class Tuple{
 		movMovs.add(movTarget);
 	}
 
+
+
+
 }
+ // this is a different class down here, chief!

@@ -2,6 +2,7 @@ package edu.uchicago.cs.java.finalproject.game.model;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import edu.uchicago.cs.java.finalproject.controller.Game;
 import edu.uchicago.cs.java.finalproject.sounds.Sound;
 
 // I only want one Command Center and therefore this is a perfect candidate for static
@@ -29,62 +30,54 @@ public class CommandCenter {
 	public static CopyOnWriteArrayList<Movable> movDots = new CopyOnWriteArrayList<Movable>();
 
     //create board as a grid of target spaces
-    public static TargetSpace[][] grid = new TargetSpace[29][37];
+    public static TargetSpace[][] grid = new TargetSpace[28][36];
 
 	// Constructor made private - static Utility class only
 	private CommandCenter() {}
 	
 	public static void initGame(){
         setMaze();
-        //playIntro();
+        setLevel(1);
+        setScore(0);
+        setNumFalcons(1);
+        spawnFalcon(true);
         initPacmanLives();
-        spawnPacman(true);
-        //pacman.getPacmanSpaceCoord();
-        spawnBlinky(true);
-		setLevel(1);
-		setScore(0);
-		setNumFalcons(1);
-		spawnFalcon(true);
+        playIntro();
+        if (Game.getnTick() > 50)
+        {
+            spawnPacman(true);
+            spawnBlinky(true);
+        }
 	}
 	
     public static void setMaze()
     {
         //loop over TargetSpaces and initialize contents
-        for (int nD = 1; nD <= 36; nD++)
+        for (int nD = 0; nD < 36; nD++)
         {
-            for (int nC = 1; nC <= 28; nC++)
+            for (int nC = 0; nC < 28; nC++)
             {
-                grid[nC][nD] = new TargetSpace(nC, nD);
-                if(grid[nC][nD] != null)
-                {
+                    grid[nC][nD] = new TargetSpace(nC+1, nD+1);
+
                     if(grid[nC][nD].getIsEnergizer())
                     {
-                        movDebris.add(new Energizer(nC, nD));
+                        movDebris.add(new Energizer(nC+1, nD+1));
                     }
                     else if (grid[nC][nD].getIsDot())
                     {
-                        movDots.add(new Dot(nC, nD));
+                        movDots.add(new Dot(nC+1, nD+1));
                     }
                     else if (grid[nC][nD].getIsGhostBox())
                     {
-                        movDebris.add(new GhostBox(nC, nD));
+                        movDebris.add(new GhostBox(nC+1, nD+1));
                     }
                     else if (grid[nC][nD].getIsWall())
                     {
-                        movDebris.add(new Wall(nC, nD));
+                        movDebris.add(new Wall(nC+1, nD+1));
                     }
-                }
+
 
             }
-        }
-    }
-
-    public void removeDot()
-    {
-        if (grid[pacman.getPacManSpaceX()][pacman.getPacManSpaceY()].getIsDot())
-        {
-            nScore = nScore + 10;
-            grid[pacman.getPacManSpaceX()][pacman.getPacManSpaceY()].setIsDot(false);
         }
     }
 
