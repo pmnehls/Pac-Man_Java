@@ -50,13 +50,20 @@ public class Game implements Runnable, KeyListener {
 	private Thread thrAnim;
 	private int nLevel = 1;
 	private static int nTick = 0;
-    private static int nDotCounter = 0;
+    private static int nTickStore;
+    private static int nDotCounter;
+    private static int nEnergizerCounter;
     private static int nScore = 0;
+    private static int nScatterSeconds = 7; //hardcoded for testing
+    private static int nChaseSeconds = 20; //hardcoded for testing
 	private ArrayList<Tuple> tupMarkForRemovals;
 	private ArrayList<Tuple> tupMarkForAdds;
 	private boolean bMuted = true;
     private boolean bIntroDone = false;
-	
+
+    //energizer booleans and variables
+    private static boolean isInvincible;
+    private static int nScaredSeconds;
 
 	private final int PAUSE = 80, // p key
 			QUIT = 81, // q key
@@ -196,7 +203,27 @@ public class Game implements Runnable, KeyListener {
                     {
                         tupMarkForRemovals.add(new Tuple(CommandCenter.movDots, dot));
                         nDotCounter += 1;
-                        System.out.println(nDotCounter);
+                    }
+                }
+
+            }
+        }
+
+        for (Movable pacman : CommandCenter.movPacman)
+        {
+            for (Movable energizer : CommandCenter.movEnergizers)
+            {
+                Point pntPacman = pacman.getCenter();
+                Point pntEnergizer = energizer.getCenter();
+
+                if (Math.abs(pntPacman.x - pntEnergizer.x) < 10)
+                {
+                    if (Math.abs(pntPacman.y - pntEnergizer.y) < 10)
+                    {
+                        tupMarkForRemovals.add(new Tuple(CommandCenter.movEnergizers, energizer));
+                        nEnergizerCounter += 1;
+                        isInvincible = true;
+                        nTickStore = nTick;
                     }
                 }
 
@@ -389,6 +416,11 @@ public class Game implements Runnable, KeyListener {
         return nTick;
     }
 
+    public static void setnTick(int nTick)
+    {
+        Game.nTick = nTick;
+    }
+
     public static int getDotCounter()
     {
         return nDotCounter;
@@ -409,12 +441,57 @@ public class Game implements Runnable, KeyListener {
         Game.nScore = nScore;
     }
 
+    public static int getnScatterSeconds()
+    {
+        return nScatterSeconds;
+    }
 
+    public static void setScatterSeconds(int nSeconds)
+    {
+        Game.nScatterSeconds = nSeconds;
+    }
 
+    public static int getScaredSeconds()
+    {
+        return nScaredSeconds;
+    }
 
+    public static void setScaredSeconds(int nScaredSeconds)
+    {
+        Game.nScaredSeconds = nScaredSeconds;
+    }
 
+    public static int getChaseSeconds()
+    {
+        return nChaseSeconds;
+    }
 
-	// Varargs for stopping looping-music-clips
+    public static void setChaseSeconds(int nChaseSeconds)
+    {
+        Game.nChaseSeconds = nChaseSeconds;
+    }
+
+    public static boolean getIsInvincible()
+    {
+        return isInvincible;
+    }
+
+    public static void setIsInvincible(boolean isInvincible)
+    {
+        Game.isInvincible = isInvincible;
+    }
+
+    public static int getTickStore()
+    {
+        return nTickStore;
+    }
+
+    public static void setTickStore(int nTickStore)
+    {
+        Game.nTickStore = nTickStore;
+    }
+
+    // Varargs for stopping looping-music-clips
 	private static void stopLoopingSounds(Clip... clpClips) {
 		for (Clip clp : clpClips) {
 			clp.stop();
@@ -432,7 +509,10 @@ public class Game implements Runnable, KeyListener {
 		// System.out.println(nKey);
 
 		if (nKey == START && !CommandCenter.isPlaying())
-			startGame();
+        {
+            startGame();
+            nTick = 0;
+        }
 
 		if (pacman != null) {
 
@@ -553,9 +633,6 @@ class Tuple{
 	public void addMovable(){
 		movMovs.add(movTarget);
 	}
-
-
-
 
 }
  // this is a different class down here, chief!

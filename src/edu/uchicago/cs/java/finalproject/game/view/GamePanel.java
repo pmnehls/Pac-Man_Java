@@ -54,7 +54,7 @@ import edu.uchicago.cs.java.finalproject.game.model.Movable;
 		initView();
 		
 		gmf.setSize(dim);
-		gmf.setTitle("Game Base");
+		gmf.setTitle("PAC-MAN");
 		gmf.setResizable(false);
 		gmf.setVisible(true);
 		this.setFocusable(true);
@@ -108,7 +108,8 @@ import edu.uchicago.cs.java.finalproject.game.model.Movable;
 			iterateMovables(grpOff, 
 					   CommandCenter.movDebris,
                        CommandCenter.movDots,
-			           CommandCenter.movFloaters, 
+                       CommandCenter.movEnergizers,
+			           //CommandCenter.movFloaters,
 			           CommandCenter.movFoes,
                        CommandCenter.movPacman,
 			           CommandCenter.movFriends);
@@ -191,41 +192,41 @@ import edu.uchicago.cs.java.finalproject.game.model.Movable;
 		strDisplay = "use the arrow keys to turn Pac-Man, don't hold them down";
 		grpOff.drawString(strDisplay,
 				(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4
-						+ nFontHeight + 40);
+						+ nFontHeight + 100);
 
-		strDisplay = "use the space bar to fire";
-		grpOff.drawString(strDisplay,
-				(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4
-						+ nFontHeight + 80);
+		//strDisplay = "use the space bar to fire";
+		//grpOff.drawString(strDisplay,
+		//		(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4
+		//				+ nFontHeight + 80);
 
 		strDisplay = "'S' to Start";
 		grpOff.drawString(strDisplay,
 				(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4
-						+ nFontHeight + 120);
+						+ nFontHeight + 160);
 
 		strDisplay = "'P' to Pause";
 		grpOff.drawString(strDisplay,
 				(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4
-						+ nFontHeight + 160);
+						+ nFontHeight + 200);
 
 		strDisplay = "'Q' to Quit";
 		grpOff.drawString(strDisplay,
 				(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4
-						+ nFontHeight + 200);
-		strDisplay = "left pinkie on 'A' for Shield";
-		grpOff.drawString(strDisplay,
-				(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4
 						+ nFontHeight + 240);
+		//strDisplay = "left pinkie on 'A' for Shield";
+		//grpOff.drawString(strDisplay,
+		//		(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4
+		//				+ nFontHeight + 240);
 
-		strDisplay = "left index finger on 'F' for Guided Missile";
-		grpOff.drawString(strDisplay,
-				(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4
-						+ nFontHeight + 280);
+		//strDisplay = "left index finger on 'F' for Guided Missile";
+		//grpOff.drawString(strDisplay,
+		//		(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4
+		//				+ nFontHeight + 280);
 
-		strDisplay = "'Numeric-Enter' for Hyperspace";
-		grpOff.drawString(strDisplay,
-				(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4
-						+ nFontHeight + 320);
+		//strDisplay = "'Numeric-Enter' for Hyperspace";
+		//grpOff.drawString(strDisplay,
+		//		(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4
+		//				+ nFontHeight + 320);
 	}
 	
 	public GameFrame getFrm() {return this.gmf;}

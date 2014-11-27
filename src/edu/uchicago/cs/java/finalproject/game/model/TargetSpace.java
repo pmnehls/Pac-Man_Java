@@ -109,6 +109,12 @@ public class TargetSpace extends Sprite
         return isEnergizer;
     }
 
+    public void setIsEnergizer(boolean isEnergizer)
+    {
+        this.isEnergizer = isEnergizer;
+    }
+
+
     public boolean getIsGhostBox()
     {
         return isGhostBox;

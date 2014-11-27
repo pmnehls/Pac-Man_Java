@@ -38,6 +38,7 @@ public class CommandCenter {
 	public static void initGame(){
         setMaze();
         setLevel(1);
+        setTimers();
         setScore(0);
         setNumFalcons(1);
         spawnFalcon(true);
@@ -61,7 +62,7 @@ public class CommandCenter {
 
                     if(grid[nC][nD].getIsEnergizer())
                     {
-                        movDebris.add(new Energizer(nC+1, nD+1));
+                        movEnergizers.add(new Energizer(nC+1, nD+1));
                     }
                     else if (grid[nC][nD].getIsDot())
                     {
@@ -79,6 +80,36 @@ public class CommandCenter {
 
             }
         }
+    }
+
+    public static void setTimers()
+    {
+        if(nLevel == 1)
+        {
+            Game.setScaredSeconds(6);
+        }
+        else if (nLevel == 2)
+        {
+            Game.setScaredSeconds(5);
+        }
+        else if (nLevel == 3)
+        {
+            Game.setScaredSeconds(4);
+        }
+        else if (nLevel == 4)
+        {
+            Game.setScaredSeconds(3);
+        }
+        else if (nLevel < 10)
+        {
+            Game.setScaredSeconds(2);
+        }
+        else
+        {
+            Game.setScaredSeconds(1);
+        }
+
+
     }
 
     public static void playIntro()
@@ -125,6 +156,16 @@ public class CommandCenter {
             Blinky blinky = new Blinky();
             movFoes.add(blinky);
         }
+
+    }
+
+    public static void setScatterTimer()
+    {
+
+    }
+
+    public static void setChaseTimer()
+    {
 
     }
 

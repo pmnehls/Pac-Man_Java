@@ -148,6 +148,12 @@ public class Pacman extends Sprite
             CommandCenter.grid[spaceX-1][spaceY-1].setIsDot(false);
         }
 
+        if (CommandCenter.grid[spaceX-1][spaceY-1].getIsEnergizer())
+        {
+            clpWakawaka.loop(2);
+            CommandCenter.grid[spaceX-1][spaceY-1].setIsEnergizer(false);
+        }
+
         //if (currentSpace.getIsEnergizer())
 //        {
 //
