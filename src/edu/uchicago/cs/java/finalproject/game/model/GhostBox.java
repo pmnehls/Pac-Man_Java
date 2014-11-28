@@ -46,8 +46,8 @@ public class GhostBox extends Sprite
             pntCs.add(new Point(-1, 1));
 
             assignPolarPoints(pntCs);
-            setColor(Color.BLUE);
-            setRadius(8);
+            setColor(new Color(0,0,180));
+            setRadius(6);
         }
 
         int nHeight = TargetSpace.TS_HEIGHT;

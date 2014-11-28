@@ -38,8 +38,8 @@ public class Pacman extends Sprite
     private Clip clpWakawaka;
 
     //private TargetSpace currentSpace;
-    private int spaceX;
-    private int spaceY;
+    private static int spaceX;
+    private static int spaceY;
     //private double dPacManSpeed = 4.0;
     private int nPacManSpeed = 3;
     //private int nShield;
@@ -462,12 +462,12 @@ public class Pacman extends Sprite
         return new Point(x, y);
     }
 
-    public int getPacManSpaceX()
+    public static int getPacManSpaceX()
     {
         return spaceX;
     }
 
-    public int getPacManSpaceY()
+    public static int getPacManSpaceY()
     {
         return  spaceY;
     }
@@ -477,5 +477,25 @@ public class Pacman extends Sprite
         Point pnt = getCenter();
         return new TargetSpace((pnt.x /TargetSpace.TS_WIDTH) + 1, (pnt.y / TargetSpace.TS_HEIGHT) +1 );
 
+    }
+
+    public int getDirection()
+    {
+        if (getOrientation() == 0)
+        {
+            return 1;
+        }
+        else if (getOrientation() == 90)
+        {
+            return 2;
+        }
+        else if (getOrientation() == 180)
+        {
+            return 3;
+        }
+        else
+        {
+            return 0;
+        }
     }
 }

@@ -28,7 +28,7 @@ public class Wall extends Sprite
 
         assignPolarPoints(pntCs);
 
-        setColor(Color.BLUE);
+        setColor(new Color(0,0,180));
 
         setCenter(new Point(TargetSpace.TS_WIDTH * x - TargetSpace.TS_WIDTH/2,
                 TargetSpace.TS_HEIGHT* y - TargetSpace.TS_HEIGHT/2));

@@ -49,11 +49,13 @@ public class Game implements Runnable, KeyListener {
 											// updates (animation)
 	private Thread thrAnim;
 	private int nLevel = 1;
+    private static int nLives = 3;
 	private static int nTick = 0;
     private static int nTickStore;
     private static int nDotCounter;
     private static int nEnergizerCounter;
     private static int nScore = 0;
+    private static int nGhostsEaten;
     private static int nScatterSeconds = 7; //hardcoded for testing
     private static int nChaseSeconds = 20; //hardcoded for testing
 	private ArrayList<Tuple> tupMarkForRemovals;
@@ -203,6 +205,7 @@ public class Game implements Runnable, KeyListener {
                     {
                         tupMarkForRemovals.add(new Tuple(CommandCenter.movDots, dot));
                         nDotCounter += 1;
+                        CommandCenter.setScore(CommandCenter.getScore() + 10);
                     }
                 }
 
@@ -224,67 +227,122 @@ public class Game implements Runnable, KeyListener {
                         nEnergizerCounter += 1;
                         isInvincible = true;
                         nTickStore = nTick;
+                        CommandCenter.setScore(CommandCenter.getScore() + 50);
                     }
                 }
 
             }
         }
 
-		for (Movable movFriend : CommandCenter.movFriends) {
-			for (Movable movFoe : CommandCenter.movFoes) {
+        //handle pac-man and ghost collision
+        for (Movable pacman : CommandCenter.movPacman)
+        {
+            for (Movable ghost : CommandCenter.movFoes)
+            {
+                Point pntPacman = pacman.getCenter();
+                Point pacManSquare = new Point((pntPacman.x/TargetSpace.TS_WIDTH)+1, (pntPacman.y/TargetSpace.TS_HEIGHT)+1);
+                Point pntGhost = ghost.getCenter();
+                Point ghostSquare = new Point((pntGhost.x/TargetSpace.TS_WIDTH)+1, (pntGhost.y/TargetSpace.TS_HEIGHT)+1);
 
-				pntFriendCenter = movFriend.getCenter();
-				pntFoeCenter = movFoe.getCenter();
-				nFriendRadiux = movFriend.getRadius();
-				nFoeRadiux = movFoe.getRadius();
+                //resets ghost eaten counter for proper bonus points
+                if (!isInvincible)
+                {
+                    nGhostsEaten = 0;
+                }
 
-				//detect collision
-				if (pntFriendCenter.distance(pntFoeCenter) < (nFriendRadiux + nFoeRadiux)) {
+                if (pacManSquare.x == ghostSquare.x)
+                {
+                    if (pacManSquare.y == ghostSquare.y)
+                    {
+                        if (isInvincible)
+                        {
+                            tupMarkForRemovals.add(new Tuple(CommandCenter.movFoes, ghost));
+                            Sound.playSound("pacman_eatghost.wav");
+                            nGhostsEaten += 1;
 
-					//falcon
-					if ((movFriend instanceof Falcon) ){
-						if (!CommandCenter.getFalcon().getProtected()){
-							tupMarkForRemovals.add(new Tuple(CommandCenter.movFriends, movFriend));
-							CommandCenter.spawnFalcon(false);
-							killFoe(movFoe);
-						}
-					}
-					//not the falcon
-					else {
-						tupMarkForRemovals.add(new Tuple(CommandCenter.movFriends, movFriend));
-						killFoe(movFoe);
-					}//end else 
+                            switch (nGhostsEaten)
+                            {
+                                case 1: CommandCenter.setScore(CommandCenter.getScore() + 200);
+                                    break;
+                                case 2: CommandCenter.setScore(CommandCenter.getScore() + 400);
+                                    break;
+                                case 3: CommandCenter.setScore(CommandCenter.getScore() + 800);
+                                    break;
+                                case 4: CommandCenter.setScore(CommandCenter.getScore() + 1600);
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            tupMarkForRemovals.add(new Tuple(CommandCenter.movPacman, pacman));
+                            tupMarkForRemovals.add(new Tuple(CommandCenter.movFoes, ghost));
 
-					//explode/remove foe
-					
-					
-				
-				}//end if 
-			}//end inner for
-		}//end outer for
+                            Sound.playSound("pacman_death.wav");
+                            nLives -= 1;
+
+                        }
+
+                    }
+                }
+
+            }
+        }
+
+//		for (Movable movFriend : CommandCenter.movFriends) {
+//			for (Movable movFoe : CommandCenter.movFoes) {
+//
+//				pntFriendCenter = movFriend.getCenter();
+//				pntFoeCenter = movFoe.getCenter();
+//				nFriendRadiux = movFriend.getRadius();
+//				nFoeRadiux = movFoe.getRadius();
+//
+//				//detect collision
+//				if (pntFriendCenter.distance(pntFoeCenter) < (nFriendRadiux + nFoeRadiux)) {
+//
+//					//falcon
+//					if ((movFriend instanceof Falcon) ){
+//						if (!CommandCenter.getFalcon().getProtected()){
+//							tupMarkForRemovals.add(new Tuple(CommandCenter.movFriends, movFriend));
+//							CommandCenter.spawnFalcon(false);
+//							killFoe(movFoe);
+//						}
+//					}
+//					//not the falcon
+//					else {
+//						tupMarkForRemovals.add(new Tuple(CommandCenter.movFriends, movFriend));
+//						killFoe(movFoe);
+//					}//end else
+//
+//					//explode/remove foe
+//
+//
+//
+//				}//end if
+//			}//end inner for
+//		}//end outer for
 
 
-		//check for collisions between falcon and floaters
-		if (CommandCenter.getFalcon() != null){
-			Point pntFalCenter = CommandCenter.getFalcon().getCenter();
-			int nFalRadiux = CommandCenter.getFalcon().getRadius();
-			Point pntFloaterCenter;
-			int nFloaterRadiux;
-			
-			for (Movable movFloater : CommandCenter.movFloaters) {
-				pntFloaterCenter = movFloater.getCenter();
-				nFloaterRadiux = movFloater.getRadius();
-	
-				//detect collision
-				if (pntFalCenter.distance(pntFloaterCenter) < (nFalRadiux + nFloaterRadiux)) {
-	
-					
-					tupMarkForRemovals.add(new Tuple(CommandCenter.movFloaters, movFloater));
-					Sound.playSound("pacman_eatghost.wav");
-	
-				}//end if 
-			}//end inner for
-		}//end if not null
+//		//check for collisions between falcon and floaters
+//		if (CommandCenter.getFalcon() != null){
+//			Point pntFalCenter = CommandCenter.getFalcon().getCenter();
+//			int nFalRadiux = CommandCenter.getFalcon().getRadius();
+//			Point pntFloaterCenter;
+//			int nFloaterRadiux;
+//
+//			for (Movable movFloater : CommandCenter.movFloaters) {
+//				pntFloaterCenter = movFloater.getCenter();
+//				nFloaterRadiux = movFloater.getRadius();
+//
+//				//detect collision
+//				if (pntFalCenter.distance(pntFloaterCenter) < (nFalRadiux + nFloaterRadiux)) {
+//
+//
+//					tupMarkForRemovals.add(new Tuple(CommandCenter.movFloaters, movFloater));
+//					Sound.playSound("pacman_eatghost.wav");
+//
+//				}//end if
+//			}//end inner for
+//		}//end if not null
 		
 		//remove these objects from their appropriate ArrayLists
 		//this happens after the above iterations are done
@@ -489,6 +547,16 @@ public class Game implements Runnable, KeyListener {
     public static void setTickStore(int nTickStore)
     {
         Game.nTickStore = nTickStore;
+    }
+
+    public static int getLives()
+    {
+        return  Game.nLives;
+    }
+
+    public static void setLives(int nLives)
+    {
+        Game.nLives = nLives;
     }
 
     // Varargs for stopping looping-music-clips

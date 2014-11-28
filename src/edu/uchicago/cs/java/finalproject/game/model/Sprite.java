@@ -126,6 +126,7 @@ public abstract class Sprite implements Movable {
 	public void fadeInOut() {
 	};
 
+    @Override
 	public int getOrientation() {
 		return nOrientation;
 	}

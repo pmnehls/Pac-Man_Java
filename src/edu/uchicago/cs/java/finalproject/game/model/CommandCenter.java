@@ -42,12 +42,13 @@ public class CommandCenter {
         setScore(0);
         setNumFalcons(1);
         spawnFalcon(true);
-        initPacmanLives();
+        //initPacmanLives();
         playIntro();
         if (Game.getnTick() > 50)
         {
             spawnPacman(true);
             spawnBlinky(true);
+            spawnPinky(true);
         }
 	}
 	
@@ -128,12 +129,10 @@ public class CommandCenter {
 
     public static void initPacmanLives()
     {
-        Life life1 = new Life(TargetSpace.TS_WIDTH*3, TargetSpace.TS_HEIGHT*35);
-        Life life2 = new Life(TargetSpace.TS_WIDTH*5, TargetSpace.TS_HEIGHT*35);
-        Life life3 = new Life(TargetSpace.TS_WIDTH*7, TargetSpace.TS_HEIGHT*35);
-        movDebris.add(life1);
-        movDebris.add(life2);
-        movDebris.add(life3);
+        for (int nC = 0; nC < Game.getLives(); nC++)
+        {
+            movDebris.add(new Life(TargetSpace.TS_WIDTH * (3 + (2 * nC)), TargetSpace.TS_HEIGHT*35));
+        }
     }
 
     public static void spawnPacman(boolean bFirst)
@@ -149,12 +148,26 @@ public class CommandCenter {
         {
             Blinky blinky = new Blinky();
             movFoes.add(blinky);
-            bFirstBlinky = false;
         }
         else
         {
             Blinky blinky = new Blinky();
             movFoes.add(blinky);
+        }
+
+    }
+
+    public static void spawnPinky(boolean bFirstPinky)
+    {
+        if (bFirstPinky)
+        {
+            Pinky pinky = new Pinky();
+            movFoes.add(pinky);
+        }
+        else
+        {
+            Pinky pinky = new Pinky();
+            movFoes.add(pinky);
         }
 
     }
@@ -184,6 +197,8 @@ public class CommandCenter {
 		movDebris.clear();
 		movFriends.clear();
 		movFoes.clear();
+        movDots.clear();
+        movEnergizers.clear();
 		movFloaters.clear();
 	}
 

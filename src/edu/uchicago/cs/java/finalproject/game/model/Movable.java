@@ -23,4 +23,7 @@ public interface Movable {
 	public void expire();
 	//for fading objects
 	public void fadeInOut();
+
+    public int getOrientation();
+
 } //end Movable
