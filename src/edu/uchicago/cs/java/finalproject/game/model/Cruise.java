@@ -137,4 +137,9 @@ public class Cruise extends Sprite {
 			setExpire(getExpire() - 1);
 	}
 
+    @Override
+    public void setRespawn(boolean bRespawn)
+    {
+
+    }
 }

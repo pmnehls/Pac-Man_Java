@@ -48,7 +48,7 @@ public class Game implements Runnable, KeyListener {
 	public final static int ANI_DELAY = 45; // milliseconds between screen
 											// updates (animation)
 	private Thread thrAnim;
-	private int nLevel = 1;
+	//private int nLevel = 1;
     private static int nLives = 3;
 	private static int nTick = 0;
     private static int nTickStore;
@@ -58,6 +58,7 @@ public class Game implements Runnable, KeyListener {
     private static int nGhostsEaten;
     private static int nScatterSeconds = 7; //hardcoded for testing
     private static int nChaseSeconds = 20; //hardcoded for testing
+    private int nSirenTimer;
 	private ArrayList<Tuple> tupMarkForRemovals;
 	private ArrayList<Tuple> tupMarkForAdds;
 	private boolean bMuted = true;
@@ -85,8 +86,9 @@ public class Game implements Runnable, KeyListener {
 
 	private Clip clpThrust;
 	private Clip clpMusicBackground;
+    private Clip clpSiren;
 
-	private static final int SPAWN_NEW_SHIP_FLOATER = 1200;
+	//private static final int SPAWN_NEW_SHIP_FLOATER = 1200;
 
 
 
@@ -101,6 +103,7 @@ public class Game implements Runnable, KeyListener {
 
 		clpThrust = Sound.clipForLoopFactory("whitenoise.wav");
 		clpMusicBackground = Sound.clipForLoopFactory("music-background.wav");
+        clpSiren = Sound.clipForLoopFactory("siren.wav");
 
 	}
 
@@ -153,7 +156,9 @@ public class Game implements Runnable, KeyListener {
 			//this might be a god place to check if the level is clear (no more foes)
 			//if the level is clear then spawn some big asteroids -- the number of asteroids 
 			//should increase with the level. 
-			checkNewLevel();
+
+			//FIX THIS LATER-------------------------
+			//checkNewLevel();
 
 			try {
 				// The total amount of time is guaranteed to be at least ANI_DELAY long.  If processing (update) 
@@ -192,25 +197,37 @@ public class Game implements Runnable, KeyListener {
 		Point pntFriendCenter, pntFoeCenter;
 		int nFriendRadiux, nFoeRadiux;
 
-        for (Movable pacman : CommandCenter.movPacman)
+        //for (Movable pacman : CommandCenter.movPacman)
+        //{
+        if (CommandCenter.movPacman.size() != 0)
         {
             for (Movable dot : CommandCenter.movDots)
             {
-                Point pntPacman = pacman.getCenter();
+                Point pntPacman = CommandCenter.movPacman.get(0).getCenter();
                 Point pntDot = dot.getCenter();
 
                 if (Math.abs(pntPacman.x - pntDot.x) < 6)
                 {
                     if (Math.abs(pntPacman.y - pntDot.y) < 6)
                     {
-                        tupMarkForRemovals.add(new Tuple(CommandCenter.movDots, dot));
-                        nDotCounter += 1;
+                        stopLoopingSounds(clpSiren);
+                        nDotCounter = nDotCounter + 1;
                         CommandCenter.setScore(CommandCenter.getScore() + 10);
+                        tupMarkForRemovals.add(new Tuple(CommandCenter.movDots, dot));
+                        nSirenTimer = nTick;
+
                     }
                 }
 
             }
+
+            //play siren sound if dot sound is done
+            if (nSirenTimer + 40 < nTick)
+            {
+                clpSiren.loop(Clip.LOOP_CONTINUOUSLY);
+            }
         }
+        //}
 
         for (Movable pacman : CommandCenter.movPacman)
         {
@@ -228,6 +245,26 @@ public class Game implements Runnable, KeyListener {
                         isInvincible = true;
                         nTickStore = nTick;
                         CommandCenter.setScore(CommandCenter.getScore() + 50);
+
+                        for (int nC = 0; nC < CommandCenter.movFoes.size(); nC++)
+                        {
+                            if (CommandCenter.movFoes.get(nC) instanceof Blinky)
+                            {
+                                CommandCenter.movFoes.get(nC).setRespawn(false);
+                            }
+                            else if (CommandCenter.movFoes.get(nC) instanceof Inky)
+                            {
+                                CommandCenter.movFoes.get(nC).setRespawn(false);
+                            }
+                            else if (CommandCenter.movFoes.get(nC) instanceof Pinky)
+                            {
+                                CommandCenter.movFoes.get(nC).setRespawn(false);
+                            }
+                            //else if (CommandCenter.movFoes.get(nC) instanceof Clyde)
+                            //{
+                            //    CommandCenter.movFoes.get(nC).setRespawn(false);
+                            //}
+                        }
                     }
                 }
 
@@ -250,33 +287,68 @@ public class Game implements Runnable, KeyListener {
                     nGhostsEaten = 0;
                 }
 
-                if (pacManSquare.x == ghostSquare.x)
+                if ((pacManSquare.x == ghostSquare.x) || Math.abs(pntPacman.x - pntGhost.x) < 3)
                 {
-                    if (pacManSquare.y == ghostSquare.y)
+                    if ((pacManSquare.y == ghostSquare.y) || Math.abs(pntPacman.y - pntGhost.y) < 3)
                     {
-                        if (isInvincible)
+                        if (isInvincible && !ghost.getRespawn())
                         {
-                            tupMarkForRemovals.add(new Tuple(CommandCenter.movFoes, ghost));
                             Sound.playSound("pacman_eatghost.wav");
                             nGhostsEaten += 1;
+                            if (ghost instanceof Blinky)
+                            {
+                                tupMarkForRemovals.add(new Tuple(CommandCenter.movFoes, ghost));
+                                CommandCenter.spawnBlinky(false);
+
+                            }
+                            else if (ghost instanceof Pinky)
+                            {
+                                tupMarkForRemovals.add(new Tuple(CommandCenter.movFoes, ghost));
+                                CommandCenter.spawnPinky(false);
+                            }
+                            else if (ghost instanceof Inky)
+                            {
+                                tupMarkForRemovals.add(new Tuple(CommandCenter.movFoes, ghost));
+                                CommandCenter.spawnInky(false);
+                            }
+//                            else if (ghost instanceof Clyde)
+//                            {
+//                                CommandCenter.spawnClyde(false);
+//                            }
 
                             switch (nGhostsEaten)
                             {
-                                case 1: CommandCenter.setScore(CommandCenter.getScore() + 200);
+                                case 1:
+                                    CommandCenter.setScore(CommandCenter.getScore() + 200);
                                     break;
-                                case 2: CommandCenter.setScore(CommandCenter.getScore() + 400);
+                                case 2:
+                                    CommandCenter.setScore(CommandCenter.getScore() + 400);
                                     break;
-                                case 3: CommandCenter.setScore(CommandCenter.getScore() + 800);
+                                case 3:
+                                    CommandCenter.setScore(CommandCenter.getScore() + 800);
                                     break;
-                                case 4: CommandCenter.setScore(CommandCenter.getScore() + 1600);
+                                case 4:
+                                    CommandCenter.setScore(CommandCenter.getScore() + 1600);
                                     break;
                             }
                         }
                         else
                         {
                             tupMarkForRemovals.add(new Tuple(CommandCenter.movPacman, pacman));
-                            tupMarkForRemovals.add(new Tuple(CommandCenter.movFoes, ghost));
+                            for (int nC = 0; nC < CommandCenter.movFoes.size(); nC ++)
+                            {
+                                tupMarkForRemovals.add(new Tuple(CommandCenter.movFoes,
+                                        CommandCenter.movFoes.get(nC)));
+                            }
 
+                            stopLoopingSounds(clpSiren, Pacman.getWaka());
+                            try
+                            {
+                                Thread.sleep(150);
+                            } catch (InterruptedException e)
+                            {
+                                e.printStackTrace();
+                            }
                             Sound.playSound("pacman_death.wav");
                             nLives -= 1;
 
@@ -415,16 +487,18 @@ public class Game implements Runnable, KeyListener {
 	private void spawnNewShipFloater() {
 		//make the appearance of power-up dependent upon ticks and levels
 		//the higher the level the more frequent the appearance
-		if (nTick % (SPAWN_NEW_SHIP_FLOATER - nLevel * 7) == 0) {
-			CommandCenter.movFloaters.add(new NewShipFloater());
-		}
+//		if (nTick % (SPAWN_NEW_SHIP_FLOATER - nLevel * 7) == 0) {
+//			CommandCenter.movFloaters.add(new NewShipFloater());
+//		}
 	}
 
 	// Called when user presses 's'
 	private void startGame() {
 		CommandCenter.clearAll();
+        CommandCenter.setMaze();
+        CommandCenter.playIntro();
 		CommandCenter.initGame();
-		CommandCenter.setLevel(0);
+		//CommandCenter.setLevel(1);
 		CommandCenter.setPlaying(true);
 		CommandCenter.setPaused(false);
 		//if (!bMuted)
@@ -457,13 +531,13 @@ public class Game implements Runnable, KeyListener {
 	}
 	
 	private void checkNewLevel(){
-		
+
 		if (isLevelClear() ){
 			if (CommandCenter.getFalcon() !=null)
 				CommandCenter.getFalcon().setProtected(true);
-			
+
 			spawnAsteroids(CommandCenter.getLevel() + 2);
-			CommandCenter.setLevel(CommandCenter.getLevel() + 1);
+			//CommandCenter.setLevel(CommandCenter.getLevel() + 1);
 
 		}
 	}
@@ -479,19 +553,19 @@ public class Game implements Runnable, KeyListener {
         Game.nTick = nTick;
     }
 
-    public static int getDotCounter()
+    public static int getEnergizerCounter()
     {
-        return nDotCounter;
+        return nEnergizerCounter;
     }
 
-    public static void setDotCounter(int nDotCounter)
+    public static int getDotCounter()
     {
-        Game.nDotCounter = nDotCounter;
+        return nDotCounter/2; //correcting doubling issue
     }
 
     public static int getScore()
     {
-        return nScore;
+        return nScore/2; //correcting doubling issue
     }
 
     public static void setScore(int nScore)
@@ -587,10 +661,10 @@ public class Game implements Runnable, KeyListener {
 			switch (nKey) {
 			case PAUSE:
 				CommandCenter.setPaused(!CommandCenter.isPaused());
-				if (CommandCenter.isPaused())
-					stopLoopingSounds(clpMusicBackground, clpThrust);
-				else
-					clpMusicBackground.loop(Clip.LOOP_CONTINUOUSLY);
+				//if (CommandCenter.isPaused())
+				//	stopLoopingSounds(clpMusicBackground, clpThrust);
+				//else
+					//clpMusicBackground.loop(Clip.LOOP_CONTINUOUSLY);
 				break;
 			case QUIT:
 				System.exit(0);

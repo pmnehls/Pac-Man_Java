@@ -164,4 +164,9 @@ public class TargetSpace extends Sprite
         return pCenter;
     }
 
+    @Override
+    public void setRespawn(boolean bRespawn)
+    {
+
+    }
 }

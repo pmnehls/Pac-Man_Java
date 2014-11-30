@@ -42,14 +42,22 @@ public class CommandCenter {
         setScore(0);
         setNumFalcons(1);
         spawnFalcon(true);
-        //initPacmanLives();
-        playIntro();
-        if (Game.getnTick() > 50)
+        initPacmanLives();
+
+        //playIntro();
+        try
         {
-            spawnPacman(true);
-            spawnBlinky(true);
-            spawnPinky(true);
+            Thread.sleep(4500);
+        } catch (InterruptedException e)
+        {
+            e.printStackTrace();
         }
+
+        spawnPacman(true);
+        spawnBlinky(true);
+        spawnPinky(true);
+        spawnInky(true);
+
 	}
 	
     public static void setMaze()
@@ -115,15 +123,8 @@ public class CommandCenter {
 
     public static void playIntro()
     {
+        Game.setnTick(0);
         Sound.playSound("pacman_beginning.wav");
-        try
-        {
-            Thread.sleep(4750);
-        }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
         bIntroDone = true;
     }
 
@@ -137,21 +138,30 @@ public class CommandCenter {
 
     public static void spawnPacman(boolean bFirst)
     {
-        bFirst = false;
-        pacman = new Pacman();
-        movPacman.add(pacman);
+        if (bFirst)
+        {
+            pacman = new Pacman();
+            movPacman.add(pacman);
+        }
+        else
+        {
+            pacman = new Pacman();
+            movPacman.add(pacman);
+        }
+
     }
 
     public static void spawnBlinky(boolean bFirstBlinky)
     {
         if (bFirstBlinky)
         {
-            Blinky blinky = new Blinky();
+            Blinky blinky = new Blinky(true);
             movFoes.add(blinky);
         }
         else
         {
-            Blinky blinky = new Blinky();
+            Blinky blinky = new Blinky(false);
+            blinky.setRespawn(true);
             movFoes.add(blinky);
         }
 
@@ -167,7 +177,24 @@ public class CommandCenter {
         else
         {
             Pinky pinky = new Pinky();
+            pinky.setRespawn(true);
             movFoes.add(pinky);
+        }
+
+    }
+
+    public static void spawnInky(boolean bFirstInky)
+    {
+        if (bFirstInky)
+        {
+            Inky inky = new Inky();
+            movFoes.add(inky);
+        }
+        else
+        {
+            Inky inky = new Inky();
+            inky.setRespawn(true);
+            movFoes.add(inky);
         }
 
     }
@@ -254,7 +281,7 @@ public class CommandCenter {
 	}
 
     public static Pacman getPacman() { return pacman;}
-	
+
 	public static void setFalcon(Falcon falParam){
 		falShip = falParam;
 	}

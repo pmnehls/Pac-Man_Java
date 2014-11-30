@@ -7,17 +7,17 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * Created by pmnehls on 11/27/14.
+ * Created by Patrick Nehls on 11/28/14.
  *
  * Ghost Logic is true to the original Pac-Man game. This logic is available on various sites online,
  * most references in this code come from http://home.comcast.net/~jpittman2/pacman/pacmandossier.html. All ghost logic
  * code is original.
  *
- * PINKY- When Pinky is in CHASE mode, Pinky tries to get 4 spaces ahead of whatever direction Pac-Man is facing.
- * In the original game, there was a glitch when Pac-Man was facing up, causing Pinky to target the square four
- * spaces up AND four to the left.
+ * INKY- Inky uses the most complex targeting logic. When Inky is in CHASE mode, Inky first references Blinky's square.
+ * He then references two spaces in front of where Pac-Man is facing. Then, a vector line is drawn between the two, doubling
+ * the length of the line gives Inky his ultimate target space.
  */
-public class Pinky extends Sprite
+public class Inky extends Sprite
 {
     private Point pGhostCenter;
     private int nDirection; // 0- left, 1- up, 2- right, 3-down
@@ -33,6 +33,8 @@ public class Pinky extends Sprite
     private int nTurnTick;
     private int nXTurn;
     private int nYTurn;
+    private Color ghostColor = new Color(220,220,255);
+    private int nDotLimit;
 
     //mode change booleans
     private boolean bFirstScatter;
@@ -42,10 +44,10 @@ public class Pinky extends Sprite
     private boolean bRespawn;
 
     //scatter target square information
-    private final Point scatterTargetSquare = new Point(3, 1);
+    private final Point scatterTargetSquare = new Point(28, 35);
     private int nPacmanDirection;
 
-    public Pinky()
+    public Inky()
     {
         super();
 
@@ -94,12 +96,12 @@ public class Pinky extends Sprite
 
         assignPolarPoints(pntCs);
 
-        setColor(Color.PINK);
+        setColor(ghostColor);
 
-        pGhostCenter = new Point(TargetSpace.TS_WIDTH*(14) - 1,
-                TargetSpace.TS_WIDTH*(17) + TargetSpace.TS_HEIGHT / 2);
+        pGhostCenter = new Point(TargetSpace.TS_WIDTH*(13) - 1,
+                TargetSpace.TS_HEIGHT*(17) + TargetSpace.TS_HEIGHT / 2);
 
-        //put pinky in his start location
+        //put inky in his start location
         setCenter(pGhostCenter);
 
         setOrientation(270);
@@ -109,9 +111,8 @@ public class Pinky extends Sprite
 
         setRadius(14);
 
-        //put blinky inside box
+        //put inky inside box
         bInsideBox = true;
-
 
     }
 
@@ -121,13 +122,41 @@ public class Pinky extends Sprite
 
         if(bInsideBox)
         {
-            Point pnt = getCenter();
-            setCenter(new Point(pnt.x, pnt.y - 2));
-
-            if (pnt.y <= TargetSpace.TS_HEIGHT*(14) + TargetSpace.TS_HEIGHT / 2)
+            if (CommandCenter.getLevel() == 1)
             {
-                nDirection = 0;
-                bInsideBox = false;
+                nDotLimit = 30;
+            }
+            else
+            {
+                nDotLimit = 0;
+            }
+
+            if(nDotLimit <= Game.getDotCounter())
+            {
+                Point pnt = getCenter();
+                setCenter(new Point(pnt.x + 1, pnt.y));
+                if (pnt.x >= TargetSpace.TS_WIDTH * (14))
+                {
+                    setCenter(new Point(TargetSpace.TS_WIDTH * 14, pnt.y - 2));
+                    if (pnt.y <= TargetSpace.TS_HEIGHT * (14) + TargetSpace.TS_HEIGHT / 2)
+                    {
+                        nDirection = 0;
+                        bInsideBox = false;
+                    }
+                }
+            }
+            else //waver up and down inside box
+            {
+                Point pnt = getCenter();
+                if (Game.getnTick() % 8 < 4)
+                {
+                    setCenter(new Point(pnt.x, pnt.y - 2));
+                }
+                else
+                {
+                    setCenter(new Point(pnt.x, pnt.y + 2));
+                }
+
             }
         }
         else
@@ -169,8 +198,8 @@ public class Pinky extends Sprite
                 else
                 {
                     Game.setIsInvincible(false);
-                    //Game.setnTick(Game.getTickStore());
-                    setColor(Color.PINK);
+                    Game.setnTick(Game.getTickStore());
+                    setColor(ghostColor);
                     bFirstScatter = false;
                     bFirstChase = false;
                     bFirstScared = false;
@@ -182,7 +211,7 @@ public class Pinky extends Sprite
                 chase();
             }
 
-            //get blinky Center
+            //get inky Center
             Point pnt = getCenter();
 
             //slow down if ghost is in tunnel
@@ -386,7 +415,7 @@ public class Pinky extends Sprite
     public void scatter()
     {
         nGhostSpeed = 3;
-        setColor(Color.PINK);
+        setColor(ghostColor);
 
         //reverses ghost direction if the scatter call is not the initial scatter
         if (bFirstScatter)
@@ -830,7 +859,7 @@ public class Pinky extends Sprite
     {
         //set speed
         nGhostSpeed = 3;
-        setColor(Color.PINK);
+        setColor(ghostColor);
 
         if (bFirstChase)
         {
@@ -871,41 +900,58 @@ public class Pinky extends Sprite
 
             if (nPacmanDirection == 0)
             {
-                if (pacTarget.x > 5)
+                if (pacTarget.x > 3)
                 {
-                    pacTarget.x -= 4;
+                    pacTarget.x -= 2;
                 } else
                 {
                     pacTarget.x = 1;
                 }
             } else if (nPacmanDirection == 1)
             {
-                if (pacTarget.y > 5)
+                if (pacTarget.y > 3)
                 {
-                    pacTarget.y -= 4;
+                    pacTarget.y -= 2;
                 } else
                 {
                     pacTarget.y = 1;
                 }
             } else if (nPacmanDirection == 2)
             {
-                if (pacTarget.x < 24)
+                if (pacTarget.x < 26)
                 {
-                    pacTarget.x += 4;
+                    pacTarget.x += 2;
                 } else
                 {
                     pacTarget.x = 28;
                 }
             } else if (nPacmanDirection == 3)
             {
-                if (pacTarget.y < 32)
+                if (pacTarget.y < 34)
                 {
-                    pacTarget.y += 4;
+                    pacTarget.y += 2;
                 } else
                 {
                     pacTarget.y = 36;
                 }
             }
+
+
+            //figure out vector line by referencing Blinky's square and doubling distances to pacTarget
+            for (int nC = 0; nC < CommandCenter.movFoes.size(); nC++)
+            {
+                if (CommandCenter.movFoes.get(nC) instanceof Blinky)
+                {
+                    Point blinkyCenter = new Point(CommandCenter.movFoes.get(nC).getCenter());
+                    int blinkyX = (blinkyCenter.x / TargetSpace.TS_WIDTH) + 1;
+                    int blinkyY = (blinkyCenter.y / TargetSpace.TS_HEIGHT) + 1;
+
+                    //equation to calculate double vector of blinky to spots two infront of pacman
+                    pacTarget.x = blinkyX + ((pacTarget.x - blinkyX) * 2);
+                    pacTarget.y = blinkyY + ((pacTarget.y - blinkyY) * 2);
+                }
+            }
+
 
             TargetSpace pacSquare = new TargetSpace(pacTarget.x, pacTarget.y);
             Point currPnt = getGhostSpaceCoord();
@@ -1697,7 +1743,7 @@ public class Pinky extends Sprite
 
     public static void setInsideBox(boolean bInsideBox)
     {
-        Pinky.bInsideBox = bInsideBox;
+        Inky.bInsideBox = bInsideBox;
     }
 
     public void setRespawn(boolean bRespawn)
@@ -1709,4 +1755,5 @@ public class Pinky extends Sprite
     {
         return bRespawn;
     }
+
 }

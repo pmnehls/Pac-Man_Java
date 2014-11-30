@@ -71,7 +71,7 @@ import edu.uchicago.cs.java.finalproject.game.model.Movable;
 		g.setColor(Color.white);
 		g.setFont(fnt);
 		if (CommandCenter.getScore() != 0) {
-			g.drawString("" + CommandCenter.getScore(), nFontWidth, nFontHeight);
+			g.drawString("" + CommandCenter.getScore() / 2, nFontWidth, nFontHeight); // divided by 2 to correct double count glitch
 		} else {
 			g.drawString("----", nFontWidth, nFontHeight);
 		}

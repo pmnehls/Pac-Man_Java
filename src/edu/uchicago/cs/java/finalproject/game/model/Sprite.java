@@ -45,6 +45,7 @@ public abstract class Sprite implements Movable {
 	private int[] nXCoords;
 	private int[] nYCoords;
 
+
 	public void move() {
 
 		Point pnt = getCenter();
@@ -328,4 +329,15 @@ public abstract class Sprite implements Movable {
 		nFade = n;
 	}
 
+    @Override
+    public void setRespawn(boolean bRespawn)
+    {
+
+    }
+
+    @Override
+    public boolean getRespawn()
+    {
+        return false;
+    }
 }

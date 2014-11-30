@@ -26,4 +26,8 @@ public interface Movable {
 
     public int getOrientation();
 
+    public void setRespawn(boolean bRespawn);
+
+    public boolean getRespawn();
+
 } //end Movable

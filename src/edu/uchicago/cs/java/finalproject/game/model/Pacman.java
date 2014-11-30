@@ -35,7 +35,7 @@ public class Pacman extends Sprite
     //private boolean bFacingUp = false;
     //private boolean bFacingDown = false;
 
-    private Clip clpWakawaka;
+    private static Clip clpWakawaka;
 
     //private TargetSpace currentSpace;
     private static int spaceX;
@@ -150,9 +150,10 @@ public class Pacman extends Sprite
 
         if (CommandCenter.grid[spaceX-1][spaceY-1].getIsEnergizer())
         {
-            clpWakawaka.loop(2);
+            Sound.playSound("pacman_eatfruit.wav");
             CommandCenter.grid[spaceX-1][spaceY-1].setIsEnergizer(false);
         }
+
 
         //if (currentSpace.getIsEnergizer())
 //        {
@@ -497,5 +498,10 @@ public class Pacman extends Sprite
         {
             return 0;
         }
+    }
+
+    public static Clip getWaka()
+    {
+        return Pacman.clpWakawaka;
     }
 }

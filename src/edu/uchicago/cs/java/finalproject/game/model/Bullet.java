@@ -54,4 +54,9 @@ public Bullet(Falcon fal){
 			setExpire(getExpire() - 1);
 	}
 
+    @Override
+    public void setRespawn(boolean bRespawn)
+    {
+
+    }
 }

@@ -59,4 +59,6 @@ public class Dot extends Sprite
     {
         return nDotY;
     }
+
+
 }

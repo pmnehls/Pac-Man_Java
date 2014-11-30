@@ -173,4 +173,9 @@ public class Asteroid extends Sprite {
 
 	  }
 
+    @Override
+    public void setRespawn(boolean bRespawn)
+    {
+
+    }
 }

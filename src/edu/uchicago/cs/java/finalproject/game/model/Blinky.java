@@ -28,6 +28,8 @@ public class Blinky extends Sprite
     private boolean toTurnLeft;
     private boolean toTurnUp;
     private boolean toTurnRight;
+    private boolean bRecentTurn;
+    private int nTurnTick;
     private int nXTurn;
     private int nYTurn;
 
@@ -36,6 +38,8 @@ public class Blinky extends Sprite
     private boolean bFirstChase;
     private boolean bFirstScared;
     private boolean bModeSwitch;
+    private boolean bInsideBox;
+    private boolean bRespawn;
 
     //store nTick when mode switch is triggered
     private int nTickAtSwitch;
@@ -47,7 +51,7 @@ public class Blinky extends Sprite
     //private final Point scatterTargetPixel = new Point(TargetSpace.TS_HEIGHT*26 - TargetSpace.TS_HEIGHT/2,TargetSpace.TS_HEIGHT/2);
     private final Point scatterTargetSquare = new Point(26, 1);
 
-    public Blinky()
+    public Blinky(boolean bFirst)
     {
         super();
 
@@ -102,9 +106,17 @@ public class Blinky extends Sprite
         pGhostCenter = new Point(TargetSpace.TS_WIDTH*(14) - 1,
                 TargetSpace.TS_WIDTH*(14) + TargetSpace.TS_HEIGHT / 2);
 
-        //put blinky in his start location
-        setCenter(pGhostCenter);
-
+        //put blinky in his start location if it's initial spawn
+        if(bFirst)
+        {
+            setCenter(pGhostCenter);
+        }
+        else
+        {
+            bInsideBox = true;
+            setCenter(new Point(TargetSpace.TS_WIDTH*(14) - 1,
+                    TargetSpace.TS_WIDTH*(17) + TargetSpace.TS_HEIGHT / 2));
+        }
         setOrientation(270);
 
         //set initial direction (left)
@@ -119,219 +131,253 @@ public class Blinky extends Sprite
     {
         super.move();
 
-        //change color for scared mode
-        if(Game.getIsInvincible())
+        if(bInsideBox)
         {
-            frightened();
-            nGhostSpeed = 2;
+            Point pnt = getCenter();
+            setCenter(new Point(pnt.x, pnt.y - 2));
 
-            if(Game.getTickStore()+ (23 * (Game.getScaredSeconds()-3)) > Game.getnTick())
+            if (pnt.y <= TargetSpace.TS_HEIGHT*(14) + TargetSpace.TS_HEIGHT / 2)
             {
-                setColor(Color.BLUE);
+                nDirection = 0;
+                bInsideBox = false;
             }
-            else if ((Game.getTickStore()+ (23 * (Game.getScaredSeconds()-1)) > Game.getnTick()))
+        }
+        else
+        {
+            //change color for scared mode
+            if (Game.getIsInvincible() && !bRespawn)
             {
-                //flash slow with 3 seconds left
-                if(Game.getnTick() % 4 == 0 || Game.getnTick() % 4 == 1)
-                {
-                    setColor(Color.WHITE);
-                }
-                else
+                frightened();
+                nGhostSpeed = 2;
+
+                if (Game.getTickStore() + (23 * (Game.getScaredSeconds() - 3)) > Game.getnTick())
                 {
                     setColor(Color.BLUE);
-                }
-            }
-            else if ((Game.getTickStore()+ (22 * (Game.getScaredSeconds())) > Game.getnTick()))
-            {
-                //flash fast with two second left
-                if(Game.getnTick() % 2 == 0)
+                } else if ((Game.getTickStore() + (23 * (Game.getScaredSeconds() - 1)) > Game.getnTick()))
                 {
-                    setColor(Color.WHITE);
-                }
-                else
+                    //flash slow with 3 seconds left
+                    if (Game.getnTick() % 4 == 0 || Game.getnTick() % 4 == 1)
+                    {
+                        setColor(Color.WHITE);
+                    } else
+                    {
+                        setColor(Color.BLUE);
+                    }
+                } else if ((Game.getTickStore() + (22 * (Game.getScaredSeconds())) > Game.getnTick()))
                 {
-                    setColor(Color.BLUE);
-                }
-            }
-            else
-            {
-                Game.setIsInvincible(false);
-                Game.setnTick(Game.getTickStore());
-                setColor(Color.RED);
-                bFirstScatter = false;
-                bFirstChase = false;
-                bFirstScared = false;
-                nGhostSpeed = 3; //hardcoded for now
-            }
-        }
-
-        //get blinky Center
-        Point pnt = getCenter();
-
-        //slow down if ghost is in tunnel
-        if (getGhostSpaceCoord().y == 18 && (getGhostSpaceCoord().x < 5 ||
-                getGhostSpaceCoord().x >24))
-        {
-            nGhostSpeed = 2;
-        }
-        else if (!Game.getIsInvincible())
-        {
-            nGhostSpeed = 3;
-        }
-
-        if (nDirection == 0) //moving left
-        {
-            setCenter(new Point(pnt.x-nGhostSpeed, pnt.y));
-        }
-
-        if (nDirection == 1) //moving up
-        {
-            setCenter(new Point(pnt.x, pnt.y-nGhostSpeed));
-        }
-
-        if (nDirection == 2) //moving right
-        {
-            setCenter(new Point(pnt.x+nGhostSpeed, pnt.y));
-        }
-
-        if (nDirection == 3) //moving down
-        {
-            setCenter(new Point(pnt.x, pnt.y+nGhostSpeed));
-        }
-
-        if(toTurnDown)
-        {
-
-            if (nDirection == 0)
-            {
-                if (pGhostCenter.x <= nXTurn)
+                    //flash fast with two second left
+                    if (Game.getnTick() % 2 == 0)
+                    {
+                        setColor(Color.WHITE);
+                    } else
+                    {
+                        setColor(Color.BLUE);
+                    }
+                } else
                 {
-                    nDirection = 3;
-                    setCenter(new Point(nXTurn, pGhostCenter.y));
-                    toTurnDown = false;
-                    bTurnsQueued = false;
+                    Game.setIsInvincible(false);
+                    Game.setnTick(Game.getTickStore());
+                    setColor(Color.RED);
+                    bFirstScatter = false;
+                    bFirstChase = false;
+                    bFirstScared = false;
+                    nGhostSpeed = 3; //hardcoded for now
                 }
             }
-            else if (nDirection == 2)
-            {
-                if (pGhostCenter.x >= nXTurn)
-                {
-                    nDirection = 3;
-                    setCenter(new Point(nXTurn, pGhostCenter.y));
-                    toTurnDown = false;
-                    bTurnsQueued = false;
-                }
-            }
-        }
-
-        if(toTurnUp)
-        {
-
-            if (nDirection == 0)
-            {
-                if (pGhostCenter.x <= nXTurn)
-                {
-                    nDirection = 1;
-                    setCenter(new Point(nXTurn, pGhostCenter.y));
-                    toTurnUp = false;
-                    bTurnsQueued = false;
-                }
-            }
-            else if (nDirection == 2)
-            {
-                if (pGhostCenter.x >= nXTurn)
-                {
-                    nDirection = 1;
-                    setCenter(new Point(nXTurn, pGhostCenter.y));
-                    toTurnUp = false;
-                    bTurnsQueued = false;
-                }
-            }
-        }
-
-        if(toTurnRight)
-        {
-            if (nDirection == 1)
-            {
-                if (pGhostCenter.y <= nYTurn)
-                {
-                    nDirection = 2;
-                    setCenter(new Point(pGhostCenter.x, nYTurn));
-                    toTurnRight = false;
-                    bTurnsQueued = false;
-                }
-            }
-            else if (nDirection == 3)
-            {
-                if (pGhostCenter.y >= nYTurn)
-                {
-                    nDirection = 2;
-                    setCenter(new Point(pGhostCenter.x, nYTurn));
-                    toTurnRight = false;
-                    bTurnsQueued = false;
-                }
-            }
-        }
-
-        if(toTurnLeft)
-        {
-            if (nDirection == 1)
-            {
-                if (pGhostCenter.y <= nYTurn)
-                {
-                    nDirection = 0;
-                    setCenter(new Point(pGhostCenter.x, nYTurn));
-                    toTurnLeft = false;
-                    bTurnsQueued = false;
-                }
-            }
-            if (nDirection == 3)
-            {
-                if (pGhostCenter.y >= nYTurn)
-                {
-                    nDirection = 0;
-                    setCenter(new Point(pGhostCenter.x, nYTurn));
-                    toTurnLeft = false;
-                    bTurnsQueued = false;
-                }
-            }
-        }
-
-        if(!Game.getIsInvincible())
-        {
-            //switch modes until perpetual chase cycle
-            if (Game.getnTick() <= 204) //hardcoded for testing 50 + 7*22
-            {
-                scatter();
-            }
-
-            if (Game.getnTick() > 204 && Game.getnTick() <= 644)
+            else if (Game.getIsInvincible())
             {
                 chase();
             }
-            if (Game.getnTick() > 644 && Game.getnTick() <= 798)
+
+            //get blinky Center
+            Point pnt = getCenter();
+
+            //slow down if ghost is in tunnel
+            if (getGhostSpaceCoord().y == 18 && (getGhostSpaceCoord().x < 5 ||
+                    getGhostSpaceCoord().x > 24))
             {
-                scatter();
+                nGhostSpeed = 2;
+            } else if (!Game.getIsInvincible())
+            {
+                nGhostSpeed = 3;
             }
-            if (Game.getnTick() > 798 && Game.getnTick() <= 1238)
+
+            if (nDirection == 0) //moving left
             {
-                chase();
+                setCenter(new Point(pnt.x - nGhostSpeed, pnt.y));
             }
-            if (Game.getnTick() > 1238 && Game.getnTick() <= 1392)
+
+            if (nDirection == 1) //moving up
             {
-                scatter();
+                setCenter(new Point(pnt.x, pnt.y - nGhostSpeed));
             }
-            if (Game.getnTick() > 1392 && Game.getnTick() <= 1832)
+
+            if (nDirection == 2) //moving right
             {
-                chase();
+                setCenter(new Point(pnt.x + nGhostSpeed, pnt.y));
             }
-            if (Game.getnTick() > 1832 && Game.getnTick() <= 1986)
+
+            if (nDirection == 3) //moving down
             {
-                scatter();
+                setCenter(new Point(pnt.x, pnt.y + nGhostSpeed));
             }
-            if (Game.getnTick() > 1986)
+
+            if (toTurnDown)
             {
-                chase();
+
+                if (nDirection == 0)
+                {
+                    if (pGhostCenter.x <= nXTurn)
+                    {
+                        nDirection = 3;
+                        setCenter(new Point(nXTurn, pGhostCenter.y));
+                        toTurnDown = false;
+                        bTurnsQueued = false;
+                        bRecentTurn = true;
+                        nTurnTick = Game.getnTick();
+                    }
+                } else if (nDirection == 2)
+                {
+                    if (pGhostCenter.x >= nXTurn)
+                    {
+                        nDirection = 3;
+                        setCenter(new Point(nXTurn, pGhostCenter.y));
+                        toTurnDown = false;
+                        bTurnsQueued = false;
+                        bRecentTurn = true;
+                        nTurnTick = Game.getnTick();
+                    }
+                }
+            }
+
+            if (toTurnUp)
+            {
+
+                if (nDirection == 0)
+                {
+                    if (pGhostCenter.x <= nXTurn)
+                    {
+                        nDirection = 1;
+                        setCenter(new Point(nXTurn, pGhostCenter.y));
+                        toTurnUp = false;
+                        bTurnsQueued = false;
+                        bRecentTurn = true;
+                        nTurnTick = Game.getnTick();
+                    }
+                } else if (nDirection == 2)
+                {
+                    if (pGhostCenter.x >= nXTurn)
+                    {
+                        nDirection = 1;
+                        setCenter(new Point(nXTurn, pGhostCenter.y));
+                        toTurnUp = false;
+                        bTurnsQueued = false;
+                        bRecentTurn = true;
+                        nTurnTick = Game.getnTick();
+                    }
+                }
+            }
+
+            if (toTurnRight)
+            {
+                if (nDirection == 1)
+                {
+                    if (pGhostCenter.y <= nYTurn)
+                    {
+                        nDirection = 2;
+                        setCenter(new Point(pGhostCenter.x, nYTurn));
+                        toTurnRight = false;
+                        bTurnsQueued = false;
+                        bRecentTurn = true;
+                        nTurnTick = Game.getnTick();
+                    }
+                } else if (nDirection == 3)
+                {
+                    if (pGhostCenter.y >= nYTurn)
+                    {
+                        nDirection = 2;
+                        setCenter(new Point(pGhostCenter.x, nYTurn));
+                        toTurnRight = false;
+                        bTurnsQueued = false;
+                        bRecentTurn = true;
+                        nTurnTick = Game.getnTick();
+                    }
+                }
+            }
+
+            if (toTurnLeft)
+            {
+                if (nDirection == 1)
+                {
+                    if (pGhostCenter.y <= nYTurn)
+                    {
+                        nDirection = 0;
+                        setCenter(new Point(pGhostCenter.x, nYTurn));
+                        toTurnLeft = false;
+                        bTurnsQueued = false;
+                        bRecentTurn = true;
+                        nTurnTick = Game.getnTick();
+                    }
+                }
+                if (nDirection == 3)
+                {
+                    if (pGhostCenter.y >= nYTurn)
+                    {
+                        nDirection = 0;
+                        setCenter(new Point(pGhostCenter.x, nYTurn));
+                        toTurnLeft = false;
+                        bTurnsQueued = false;
+                        bRecentTurn = true;
+                        nTurnTick = Game.getnTick();
+                    }
+                }
+            }
+
+            if (!Game.getIsInvincible())
+            {
+                //switch modes until perpetual chase cycle
+                if (Game.getnTick() <= 204) //hardcoded for testing 50 + 7*22
+                {
+                    scatter();
+                }
+
+                if (Game.getnTick() > 204 && Game.getnTick() <= 644)
+                {
+                    chase();
+                }
+                if (Game.getnTick() > 644 && Game.getnTick() <= 798)
+                {
+                    scatter();
+                }
+                if (Game.getnTick() > 798 && Game.getnTick() <= 1238)
+                {
+                    chase();
+                }
+                if (Game.getnTick() > 1238 && Game.getnTick() <= 1392)
+                {
+                    scatter();
+                }
+                if (Game.getnTick() > 1392 && Game.getnTick() <= 1832)
+                {
+                    chase();
+                }
+                if (Game.getnTick() > 1832 && Game.getnTick() <= 1986)
+                {
+                    scatter();
+                }
+                if (Game.getnTick() > 1986)
+                {
+                    chase();
+                }
+            }
+
+            //handle case where reversal is triggered and ghost is still in same square after turn trigger
+            if (bRecentTurn)
+            {
+                if (nTurnTick + 4 < Game.getnTick())
+                {
+                    bRecentTurn = false;
+                }
             }
         }
 
@@ -342,11 +388,12 @@ public class Blinky extends Sprite
     public void scatter()
     {
         nGhostSpeed = 3;
+        setColor(Color.RED);
 
         //reverses ghost direction if the scatter call is not the initial scatter
         if (bFirstScatter)
         {
-            if (!bTurnsQueued) //reverse direction if turn queue is not loaded
+            if (!bTurnsQueued && !bRecentTurn) //reverse direction if turn queue is not loaded
             {
                 nDirection = (nDirection + 2) % 4;
             }
@@ -785,10 +832,11 @@ public class Blinky extends Sprite
     {
         //set speed
         nGhostSpeed = 3;
+        setColor(Color.red);
 
         if (bFirstChase)
         {
-            if (!bTurnsQueued) //reverse direction if turn queue is not loaded
+            if (!bTurnsQueued && !bRecentTurn) //reverse direction if turn queue is not loaded
             {
                 nDirection = (nDirection + 2) % 4;
             }
@@ -1220,10 +1268,11 @@ public class Blinky extends Sprite
     public void frightened()
     {
         nGhostSpeed = 2;
+
         //reverses ghost direction if the scatter call is not the initial scatter
         if (bFirstScared)
         {
-            if (!bTurnsQueued) //reverse direction if turn queue is not loaded
+            if (!bTurnsQueued && !bRecentTurn) //reverse direction if turn queue is not loaded
             {
                 nDirection = (nDirection + 2) % 4;
             }
@@ -1591,6 +1640,14 @@ public class Blinky extends Sprite
         return (Math.sqrt((leg1*leg1) + (leg2*leg2)));
     }
 
+    public void setRespawn(boolean bRespawn)
+    {
+        this.bRespawn = bRespawn;
+    }
 
+    public boolean getRespawn()
+    {
+        return bRespawn;
+    }
 
 }
