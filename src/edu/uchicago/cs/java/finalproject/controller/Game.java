@@ -49,7 +49,7 @@ public class Game implements Runnable, KeyListener {
 											// updates (animation)
 	private Thread thrAnim;
 	//private int nLevel = 1;
-    private static int nLives = 3;
+    private static int nLives = 4;
 	private static int nTick = 0;
     private static int nTickStore;
     private static int nDotCounter;
@@ -86,7 +86,7 @@ public class Game implements Runnable, KeyListener {
 
 	private Clip clpThrust;
 	private Clip clpMusicBackground;
-    private Clip clpSiren;
+    private static Clip clpSiren;
 
 	//private static final int SPAWN_NEW_SHIP_FLOATER = 1200;
 
@@ -157,8 +157,7 @@ public class Game implements Runnable, KeyListener {
 			//if the level is clear then spawn some big asteroids -- the number of asteroids 
 			//should increase with the level. 
 
-			//FIX THIS LATER-------------------------
-			//checkNewLevel();
+			checkNewLevel();
 
 			try {
 				// The total amount of time is guaranteed to be at least ANI_DELAY long.  If processing (update) 
@@ -176,8 +175,8 @@ public class Game implements Runnable, KeyListener {
 
 	private void checkCollisions() {
 
-		
-		//@formatter:off
+
+        //@formatter:off
 		//for each friend in movFriends
 			//for each foe in movFoes
 				//if the distance between the two centers is less than the sum of their radii
@@ -221,6 +220,7 @@ public class Game implements Runnable, KeyListener {
 
             }
 
+
             //play siren sound if dot sound is done
             if (nSirenTimer + 40 < nTick)
             {
@@ -260,10 +260,10 @@ public class Game implements Runnable, KeyListener {
                             {
                                 CommandCenter.movFoes.get(nC).setRespawn(false);
                             }
-                            //else if (CommandCenter.movFoes.get(nC) instanceof Clyde)
-                            //{
-                            //    CommandCenter.movFoes.get(nC).setRespawn(false);
-                            //}
+                            else if (CommandCenter.movFoes.get(nC) instanceof Clyde)
+                            {
+                                CommandCenter.movFoes.get(nC).setRespawn(false);
+                            }
                         }
                     }
                 }
@@ -311,10 +311,11 @@ public class Game implements Runnable, KeyListener {
                                 tupMarkForRemovals.add(new Tuple(CommandCenter.movFoes, ghost));
                                 CommandCenter.spawnInky(false);
                             }
-//                            else if (ghost instanceof Clyde)
-//                            {
-//                                CommandCenter.spawnClyde(false);
-//                            }
+                            else if (ghost instanceof Clyde)
+                            {
+                                tupMarkForRemovals.add(new Tuple(CommandCenter.movFoes, ghost));
+                                CommandCenter.spawnClyde(false);
+                            }
 
                             switch (nGhostsEaten)
                             {
@@ -351,6 +352,7 @@ public class Game implements Runnable, KeyListener {
                             }
                             Sound.playSound("pacman_death.wav");
                             nLives -= 1;
+                            CommandCenter.resetLevel();
 
                         }
 
@@ -495,10 +497,8 @@ public class Game implements Runnable, KeyListener {
 	// Called when user presses 's'
 	private void startGame() {
 		CommandCenter.clearAll();
-        CommandCenter.setMaze();
         CommandCenter.playIntro();
 		CommandCenter.initGame();
-		//CommandCenter.setLevel(1);
 		CommandCenter.setPlaying(true);
 		CommandCenter.setPaused(false);
 		//if (!bMuted)
@@ -530,16 +530,26 @@ public class Game implements Runnable, KeyListener {
 		
 	}
 	
-	private void checkNewLevel(){
-
-		if (isLevelClear() ){
-			if (CommandCenter.getFalcon() !=null)
-				CommandCenter.getFalcon().setProtected(true);
-
-			spawnAsteroids(CommandCenter.getLevel() + 2);
-			//CommandCenter.setLevel(CommandCenter.getLevel() + 1);
-
-		}
+	private void checkNewLevel()
+    {
+        if (Game.getDotCounter() >= 240)
+        {
+            if(Game.getEnergizerCounter() >= 4)
+            {
+                CommandCenter.setLevel(CommandCenter.getLevel() + 1);
+                CommandCenter.clearAll();
+                stopLoopingSounds(clpSiren, Pacman.getWaka());
+                CommandCenter.startNextLevel(CommandCenter.getLevel());
+            }
+        }
+		//if (isLevelClear() ){
+		//	if (CommandCenter.getFalcon() !=null)
+		//		CommandCenter.getFalcon().setProtected(true);
+        //
+		//	spawnAsteroids(CommandCenter.getLevel() + 2);
+		//	//CommandCenter.setLevel(CommandCenter.getLevel() + 1);
+        //
+        //		}
 	}
 	
 	
@@ -558,14 +568,24 @@ public class Game implements Runnable, KeyListener {
         return nEnergizerCounter;
     }
 
+    public static void setEnergizerCounter(int nEnergizerCounter)
+    {
+        Game.nEnergizerCounter = nEnergizerCounter;
+    }
+
     public static int getDotCounter()
     {
-        return nDotCounter/2; //correcting doubling issue
+        return nDotCounter;
+    }
+
+    public static void setDotCounter(int nDotCounter)
+    {
+        Game.nDotCounter = nDotCounter;
     }
 
     public static int getScore()
     {
-        return nScore/2; //correcting doubling issue
+        return nScore;
     }
 
     public static void setScore(int nScore)
@@ -633,6 +653,11 @@ public class Game implements Runnable, KeyListener {
         Game.nLives = nLives;
     }
 
+    public static Clip getSiren()
+    {
+        return Game.clpSiren;
+    }
+
     // Varargs for stopping looping-music-clips
 	private static void stopLoopingSounds(Clip... clpClips) {
 		for (Clip clp : clpClips) {
@@ -661,8 +686,10 @@ public class Game implements Runnable, KeyListener {
 			switch (nKey) {
 			case PAUSE:
 				CommandCenter.setPaused(!CommandCenter.isPaused());
-				//if (CommandCenter.isPaused())
-				//	stopLoopingSounds(clpMusicBackground, clpThrust);
+				if (CommandCenter.isPaused())
+                {
+                    stopLoopingSounds(clpSiren, Pacman.getWaka());
+                }
 				//else
 					//clpMusicBackground.loop(Clip.LOOP_CONTINUOUSLY);
 				break;

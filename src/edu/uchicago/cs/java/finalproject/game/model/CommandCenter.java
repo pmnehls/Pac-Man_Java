@@ -5,6 +5,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import edu.uchicago.cs.java.finalproject.controller.Game;
 import edu.uchicago.cs.java.finalproject.sounds.Sound;
 
+import javax.sound.sampled.Clip;
+
 // I only want one Command Center and therefore this is a perfect candidate for static
 // Able to get access to methods and my movMovables ArrayList from the static context.
 public class CommandCenter {
@@ -28,6 +30,7 @@ public class CommandCenter {
 	public static CopyOnWriteArrayList<Movable> movFloaters = new CopyOnWriteArrayList<Movable>();
 	public static CopyOnWriteArrayList<Movable> movEnergizers = new CopyOnWriteArrayList<Movable>();
 	public static CopyOnWriteArrayList<Movable> movDots = new CopyOnWriteArrayList<Movable>();
+    public static CopyOnWriteArrayList<Movable> movLives = new CopyOnWriteArrayList<Movable>();
 
     //create board as a grid of target spaces
     public static TargetSpace[][] grid = new TargetSpace[28][36];
@@ -40,8 +43,8 @@ public class CommandCenter {
         setLevel(1);
         setTimers();
         setScore(0);
-        setNumFalcons(1);
-        spawnFalcon(true);
+        //setNumFalcons(1);
+        //spawnFalcon(true);
         initPacmanLives();
 
         //playIntro();
@@ -57,6 +60,7 @@ public class CommandCenter {
         spawnBlinky(true);
         spawnPinky(true);
         spawnInky(true);
+        spawnClyde(true);
 
 	}
 	
@@ -109,7 +113,15 @@ public class CommandCenter {
         {
             Game.setScaredSeconds(3);
         }
-        else if (nLevel < 10)
+        else if (nLevel == 5)
+        {
+            Game.setScaredSeconds(2);
+        }
+        else if (nLevel == 6)
+        {
+            Game.setScaredSeconds(5);
+        }
+        else if (nLevel >= 7 && nLevel < 10)
         {
             Game.setScaredSeconds(2);
         }
@@ -117,7 +129,6 @@ public class CommandCenter {
         {
             Game.setScaredSeconds(1);
         }
-
 
     }
 
@@ -130,9 +141,9 @@ public class CommandCenter {
 
     public static void initPacmanLives()
     {
-        for (int nC = 0; nC < Game.getLives(); nC++)
+        for (int nC = 0; nC < Game.getLives() - 1; nC++)
         {
-            movDebris.add(new Life(TargetSpace.TS_WIDTH * (3 + (2 * nC)), TargetSpace.TS_HEIGHT*35));
+            movLives.add(new Life(TargetSpace.TS_WIDTH * (3 + (2 * nC)), TargetSpace.TS_HEIGHT*35));
         }
     }
 
@@ -199,6 +210,22 @@ public class CommandCenter {
 
     }
 
+    public static void spawnClyde(boolean bFirstClyde)
+    {
+        if (bFirstClyde)
+        {
+            Clyde clyde = new Clyde();
+            movFoes.add(clyde);
+        }
+        else
+        {
+            Clyde clyde = new Clyde();
+            clyde.setRespawn(true);
+            movFoes.add(clyde);
+        }
+
+    }
+
     public static void setScatterTimer()
     {
 
@@ -227,7 +254,37 @@ public class CommandCenter {
         movDots.clear();
         movEnergizers.clear();
 		movFloaters.clear();
+        movPacman.clear();
 	}
+
+    public static void startNextLevel(int nLevel)
+    {
+        initPacmanLives();
+        setMaze();
+        setLevel(nLevel);
+        Game.setnTick(0);
+        Game.setDotCounter(0);
+        Game.setEnergizerCounter(0);
+
+        spawnPacman(true);
+        spawnBlinky(true);
+        spawnPinky(true);
+        spawnInky(true);
+        spawnClyde(true);
+    }
+
+    public static void resetLevel()
+    {
+        movLives.clear();
+        Game.setnTick(0);
+        initPacmanLives();
+        spawnPacman(true);
+        spawnBlinky(true);
+        spawnInky(true);
+        spawnPinky(true);
+        spawnClyde(true);
+        Game.getSiren().loop(Clip.LOOP_CONTINUOUSLY);
+    }
 
 	public static boolean isPlaying() {
 		return bPlaying;
@@ -245,8 +302,8 @@ public class CommandCenter {
 		CommandCenter.bPaused = bPaused;
 	}
 	
-	public static boolean isGameOver() {		//if the number of falcons is zero, then game over
-		if (getNumFalcons() == 0) {
+	public static boolean isGameOver() {		//if pacman's lives = 0, then game over
+		if (Game.getLives() == 0) {
 			return true;
 		}
 		return false;
@@ -297,7 +354,6 @@ public class CommandCenter {
 	}
 
 
-
 	public static CopyOnWriteArrayList<Movable> getMovFoes() {
 		return movFoes;
 	}
@@ -307,7 +363,4 @@ public class CommandCenter {
 		return movFloaters;
 	}
 
-
-	
-	
 }

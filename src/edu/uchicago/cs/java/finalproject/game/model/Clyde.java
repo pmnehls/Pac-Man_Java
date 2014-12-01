@@ -7,21 +7,22 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * Created by Patrick Nehls on 11/28/14.
+ * Created by pmnehls on 11/30/14.
  *
- * Ghost Logic is true to the original Pac-Man game. This logic is available on various sites online,
+ *  * Ghost Logic is true to the original Pac-Man game. This logic is available on various sites online,
  * most references in this code come from http://home.comcast.net/~jpittman2/pacman/pacmandossier.html. All ghost logic
  * code is original.
  *
- * INKY- Inky uses the most complex targeting logic. When Inky is in CHASE mode, Inky first references Blinky's square.
- * He then references two spaces in front of where Pac-Man is facing. Then, a vector line is drawn between the two, doubling
- * the length of the line gives Inky his ultimate target space.
+ * CLYDE- When Clyde is in Chase mode, he targets the square that Pac-Man is in. If, however, he gets within an eight
+ * square radius of pac-man, he goes down to the bottom left corner
  */
-public class Inky extends Sprite
+public class Clyde extends Sprite
 {
     private Point pGhostCenter;
     private int nDirection; // 0- left, 1- up, 2- right, 3-down
     private int nGhostSpeed = 3; //note to change this below in tunnel checker
+    private Color ghostColor = new Color(255, 224, 97);
+
 
     //turn trigger booleans and variables
     private boolean bTurnsQueued;
@@ -33,21 +34,29 @@ public class Inky extends Sprite
     private int nTurnTick;
     private int nXTurn;
     private int nYTurn;
-    private Color ghostColor = new Color(220,220,255);
     private int nDotLimit;
 
     //mode change booleans
     private boolean bFirstScatter;
     private boolean bFirstChase;
     private boolean bFirstScared;
+    private boolean bModeSwitch;
     private static boolean bInsideBox;
     private boolean bRespawn;
+    private boolean bTooClose; //this is a clyde only boolean which prevents him from reversing when a scatter is called
+                               // due to him getting too close to pac-man
+
+    //store nTick when mode switch is triggered
+    private int nTickAtSwitch;
+
+
+
 
     //scatter target square information
-    private final Point scatterTargetSquare = new Point(28, 35);
-    private int nPacmanDirection;
+    //private final Point scatterTargetPixel = new Point(TargetSpace.TS_HEIGHT*26 - TargetSpace.TS_HEIGHT/2,TargetSpace.TS_HEIGHT/2);
+    private final Point scatterTargetSquare = new Point(1, 35);
 
-    public Inky()
+    public Clyde()
     {
         super();
 
@@ -98,10 +107,11 @@ public class Inky extends Sprite
 
         setColor(ghostColor);
 
-        pGhostCenter = new Point(TargetSpace.TS_WIDTH*(12) - 1,
-                TargetSpace.TS_HEIGHT*(17) + TargetSpace.TS_HEIGHT / 2 + 4);
+        pGhostCenter = new Point(TargetSpace.TS_WIDTH*(16) - 1,
+                TargetSpace.TS_HEIGHT*(17) + TargetSpace.TS_HEIGHT / 2  + 4);
 
-        //put inky in his start location
+
+        bInsideBox = true;
         setCenter(pGhostCenter);
 
         setOrientation(270);
@@ -111,8 +121,6 @@ public class Inky extends Sprite
 
         setRadius(14);
 
-        //put inky inside box
-        bInsideBox = true;
 
     }
 
@@ -124,7 +132,11 @@ public class Inky extends Sprite
         {
             if (CommandCenter.getLevel() == 1)
             {
-                nDotLimit = 30;
+                nDotLimit = 90;
+            }
+            else if (CommandCenter.getLevel() == 2)
+            {
+                nDotLimit = 50;
             }
             else
             {
@@ -134,8 +146,8 @@ public class Inky extends Sprite
             if(nDotLimit <= Game.getDotCounter())
             {
                 Point pnt = getCenter();
-                setCenter(new Point(pnt.x + 1, pnt.y));
-                if (pnt.x >= TargetSpace.TS_WIDTH * (14))
+                setCenter(new Point(pnt.x - 1, pnt.y));
+                if (pnt.x <= TargetSpace.TS_WIDTH * (14))
                 {
                     setCenter(new Point(TargetSpace.TS_WIDTH * 14, pnt.y - 2));
                     if (pnt.y <= TargetSpace.TS_HEIGHT * (14) + TargetSpace.TS_HEIGHT / 2)
@@ -170,32 +182,27 @@ public class Inky extends Sprite
                 if (Game.getTickStore() + (23 * (Game.getScaredSeconds() - 3)) > Game.getnTick())
                 {
                     setColor(Color.BLUE);
-                }
-                else if ((Game.getTickStore() + (23 * (Game.getScaredSeconds() - 1)) > Game.getnTick()))
+                } else if ((Game.getTickStore() + (23 * (Game.getScaredSeconds() - 1)) > Game.getnTick()))
                 {
                     //flash slow with 3 seconds left
                     if (Game.getnTick() % 4 == 0 || Game.getnTick() % 4 == 1)
                     {
                         setColor(Color.WHITE);
-                    }
-                    else
+                    } else
                     {
                         setColor(Color.BLUE);
                     }
-                }
-                else if ((Game.getTickStore() + (22 * (Game.getScaredSeconds())) > Game.getnTick()))
+                } else if ((Game.getTickStore() + (22 * (Game.getScaredSeconds())) > Game.getnTick()))
                 {
                     //flash fast with two second left
                     if (Game.getnTick() % 2 == 0)
                     {
                         setColor(Color.WHITE);
-                    }
-                    else
+                    } else
                     {
                         setColor(Color.BLUE);
                     }
-                }
-                else
+                } else
                 {
                     Game.setIsInvincible(false);
                     Game.setnTick(Game.getTickStore());
@@ -211,7 +218,7 @@ public class Inky extends Sprite
                 chase();
             }
 
-            //get inky Center
+            //get Clyde's Center
             Point pnt = getCenter();
 
             //slow down if ghost is in tunnel
@@ -219,8 +226,7 @@ public class Inky extends Sprite
                     getGhostSpaceCoord().x > 24))
             {
                 nGhostSpeed = 2;
-            }
-            else if (!Game.getIsInvincible())
+            } else if (!Game.getIsInvincible())
             {
                 nGhostSpeed = 3;
             }
@@ -259,8 +265,7 @@ public class Inky extends Sprite
                         bRecentTurn = true;
                         nTurnTick = Game.getnTick();
                     }
-                }
-                else if (nDirection == 2)
+                } else if (nDirection == 2)
                 {
                     if (pGhostCenter.x >= nXTurn)
                     {
@@ -288,8 +293,7 @@ public class Inky extends Sprite
                         bRecentTurn = true;
                         nTurnTick = Game.getnTick();
                     }
-                }
-                else if (nDirection == 2)
+                } else if (nDirection == 2)
                 {
                     if (pGhostCenter.x >= nXTurn)
                     {
@@ -316,8 +320,7 @@ public class Inky extends Sprite
                         bRecentTurn = true;
                         nTurnTick = Game.getnTick();
                     }
-                }
-                else if (nDirection == 3)
+                } else if (nDirection == 3)
                 {
                     if (pGhostCenter.y >= nYTurn)
                     {
@@ -397,14 +400,13 @@ public class Inky extends Sprite
                 }
             }
 
-        }
-
-        //handle case where reversal is triggered and ghost is still in same square after turn trigger
-        if(bRecentTurn)
-        {
-            if(nTurnTick + 4 < Game.getnTick())
+            //handle case where reversal is triggered and ghost is still in same square after turn trigger
+            if (bRecentTurn)
             {
-                bRecentTurn = false;
+                if (nTurnTick + 4 < Game.getnTick())
+                {
+                    bRecentTurn = false;
+                }
             }
         }
 
@@ -420,7 +422,7 @@ public class Inky extends Sprite
         //reverses ghost direction if the scatter call is not the initial scatter
         if (bFirstScatter)
         {
-            if (!bTurnsQueued && !bRecentTurn) //reverse direction if turn queue is not loaded
+            if (!bTurnsQueued && !bRecentTurn && !bTooClose) //reverse direction if turn queue is not loaded
             {
                 nDirection = (nDirection + 2) % 4;
             }
@@ -854,7 +856,7 @@ public class Inky extends Sprite
 
     }
 
-    // CHASE MODE-----------------------------
+    //CHASE MODE--------------------------------------------
     public void chase()
     {
         //set speed
@@ -863,7 +865,7 @@ public class Inky extends Sprite
 
         if (bFirstChase)
         {
-            if (!bTurnsQueued && !bRecentTurn) //reverse direction if turn queue is not loaded
+            if (!bTurnsQueued && !bRecentTurn && !bTooClose) //reverse direction if turn queue is not loaded
             {
                 nDirection = (nDirection + 2) % 4;
             }
@@ -877,84 +879,16 @@ public class Inky extends Sprite
             Point pacman = new Point(CommandCenter.movPacman.get(0).getCenter());
             int pacmanSpaceX = pacman.x / TargetSpace.TS_WIDTH;
             int pacmanSpaceY = pacman.y / TargetSpace.TS_HEIGHT;
-            int pacmanOrientation = CommandCenter.movPacman.get(0).getOrientation();
-
-            switch (pacmanOrientation)
-            {
-                case 0:
-                    nPacmanDirection = 1;
-                    break;
-                case 90:
-                    nPacmanDirection = 2;
-                    break;
-                case 180:
-                    nPacmanDirection = 3;
-                    break;
-                default:
-                    nPacmanDirection = 0;
-                    break;
-            }
-
-            //figure out target square based on pac man's direction and current square
             Point pacTarget = new Point(pacmanSpaceX + 1, pacmanSpaceY + 1);
-
-            if (nPacmanDirection == 0)
-            {
-                if (pacTarget.x > 3)
-                {
-                    pacTarget.x -= 2;
-                } else
-                {
-                    pacTarget.x = 1;
-                }
-            } else if (nPacmanDirection == 1)
-            {
-                if (pacTarget.y > 3)
-                {
-                    pacTarget.y -= 2;
-                } else
-                {
-                    pacTarget.y = 1;
-                }
-            } else if (nPacmanDirection == 2)
-            {
-                if (pacTarget.x < 26)
-                {
-                    pacTarget.x += 2;
-                } else
-                {
-                    pacTarget.x = 28;
-                }
-            } else if (nPacmanDirection == 3)
-            {
-                if (pacTarget.y < 34)
-                {
-                    pacTarget.y += 2;
-                } else
-                {
-                    pacTarget.y = 36;
-                }
-            }
-
-
-            //figure out vector line by referencing Blinky's square and doubling distances to pacTarget
-            for (int nC = 0; nC < CommandCenter.movFoes.size(); nC++)
-            {
-                if (CommandCenter.movFoes.get(nC) instanceof Blinky)
-                {
-                    Point blinkyCenter = new Point(CommandCenter.movFoes.get(nC).getCenter());
-                    int blinkyX = (blinkyCenter.x / TargetSpace.TS_WIDTH) + 1;
-                    int blinkyY = (blinkyCenter.y / TargetSpace.TS_HEIGHT) + 1;
-
-                    //equation to calculate double vector of blinky to spots two infront of pacman
-                    pacTarget.x = blinkyX + ((pacTarget.x - blinkyX) * 2);
-                    pacTarget.y = blinkyY + ((pacTarget.y - blinkyY) * 2);
-                }
-            }
-
-
             TargetSpace pacSquare = new TargetSpace(pacTarget.x, pacTarget.y);
             Point currPnt = getGhostSpaceCoord();
+
+            //go to scatter mode if within an 8 space radius of pacman
+            if(Math.abs(getDistance(pacman, getCenter())) < (TargetSpace.TS_HEIGHT * 8))
+            {
+                bTooClose = true;
+                scatter();
+            }
 
             //target spaces for tests for next move
             TargetSpace L = new TargetSpace(currPnt.x - 2, currPnt.y);
@@ -1370,6 +1304,7 @@ public class Inky extends Sprite
     public void frightened()
     {
         nGhostSpeed = 2;
+
         //reverses ghost direction if the scatter call is not the initial scatter
         if (bFirstScared)
         {
@@ -1741,11 +1676,6 @@ public class Inky extends Sprite
         return (Math.sqrt((leg1*leg1) + (leg2*leg2)));
     }
 
-    public static void setInsideBox(boolean bInsideBox)
-    {
-        Inky.bInsideBox = bInsideBox;
-    }
-
     public void setRespawn(boolean bRespawn)
     {
         this.bRespawn = bRespawn;
@@ -1754,6 +1684,11 @@ public class Inky extends Sprite
     public boolean getRespawn()
     {
         return bRespawn;
+    }
+
+    public static void setInsideBox(boolean bInsideBox)
+    {
+        Clyde.bInsideBox = bInsideBox;
     }
 
 }

@@ -21,6 +21,8 @@ public class Blinky extends Sprite
     private Point pGhostCenter;
     private int nDirection; // 0- left, 1- up, 2- right, 3-down
     private int nGhostSpeed = 3; //note to change this below in tunnel checker
+    private Color ghostColor = Color.RED;
+
 
     //turn trigger booleans and variables
     private boolean bTurnsQueued;
@@ -101,7 +103,7 @@ public class Blinky extends Sprite
 
         assignPolarPoints(pntCs);
 
-        setColor(Color.RED);
+        setColor(ghostColor);
 
         pGhostCenter = new Point(TargetSpace.TS_WIDTH*(14) - 1,
                 TargetSpace.TS_WIDTH*(14) + TargetSpace.TS_HEIGHT / 2);
@@ -177,7 +179,7 @@ public class Blinky extends Sprite
                 {
                     Game.setIsInvincible(false);
                     Game.setnTick(Game.getTickStore());
-                    setColor(Color.RED);
+                    setColor(ghostColor);
                     bFirstScatter = false;
                     bFirstChase = false;
                     bFirstScared = false;
@@ -388,7 +390,7 @@ public class Blinky extends Sprite
     public void scatter()
     {
         nGhostSpeed = 3;
-        setColor(Color.RED);
+        setColor(ghostColor);
 
         //reverses ghost direction if the scatter call is not the initial scatter
         if (bFirstScatter)
@@ -832,7 +834,7 @@ public class Blinky extends Sprite
     {
         //set speed
         nGhostSpeed = 3;
-        setColor(Color.red);
+        setColor(ghostColor);
 
         if (bFirstChase)
         {

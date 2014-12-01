@@ -13,9 +13,10 @@ import edu.uchicago.cs.java.finalproject.controller.Game;
 import edu.uchicago.cs.java.finalproject.game.model.CommandCenter;
 import edu.uchicago.cs.java.finalproject.game.model.Falcon;
 import edu.uchicago.cs.java.finalproject.game.model.Movable;
+import edu.uchicago.cs.java.finalproject.game.model.TargetSpace;
 
 
- public class GamePanel extends Panel {
+public class GamePanel extends Panel {
 	
 	// ==============================================================
 	// FIELDS 
@@ -71,11 +72,21 @@ import edu.uchicago.cs.java.finalproject.game.model.Movable;
 		g.setColor(Color.white);
 		g.setFont(fnt);
 		if (CommandCenter.getScore() != 0) {
-			g.drawString("" + CommandCenter.getScore() / 2, nFontWidth, nFontHeight); // divided by 2 to correct double count glitch
+			g.drawString("" + CommandCenter.getScore(), nFontWidth, nFontHeight);
 		} else {
-			g.drawString("----", nFontWidth, nFontHeight);
+			g.drawString("00", nFontWidth, nFontHeight);
 		}
 	}
+
+    private void drawLevel(Graphics g)
+    {
+        g.setColor(Color.WHITE);
+        g.setFont(fnt);
+        if(CommandCenter.getLevel() != 0)
+        {
+            g.drawString("Level " + CommandCenter.getLevel(), TargetSpace.TS_WIDTH * 24, TargetSpace.TS_HEIGHT * 35);
+        }
+    }
 	
 	@SuppressWarnings("unchecked")
 	public void update(Graphics g) {
@@ -90,7 +101,8 @@ import edu.uchicago.cs.java.finalproject.game.model.Movable;
 		grpOff.fillRect(0, 0, Game.DIM.width, Game.DIM.height);
 
 		drawScore(grpOff);
-		
+        drawLevel(grpOff);
+
 		if (!CommandCenter.isPlaying()) {
             //printLogo();
 			displayTextOnScreen();
@@ -105,7 +117,8 @@ import edu.uchicago.cs.java.finalproject.game.model.Movable;
 			
 			//draw them in decreasing level of importance
 			//friends will be on top layer and debris on the bottom
-			iterateMovables(grpOff, 
+			iterateMovables(grpOff,
+                       CommandCenter.movLives,
 					   CommandCenter.movDebris,
                        CommandCenter.movDots,
                        CommandCenter.movEnergizers,
@@ -115,7 +128,7 @@ import edu.uchicago.cs.java.finalproject.game.model.Movable;
 			           CommandCenter.movFriends);
 			
 			
-			drawNumberShipsLeft(grpOff);
+			//drawNumberShipsLeft(grpOff);
 			if (CommandCenter.isGameOver()) {
 				CommandCenter.setPlaying(false);
 				//bPlaying = false;
@@ -179,7 +192,7 @@ import edu.uchicago.cs.java.finalproject.game.model.Movable;
 		fmt = g.getFontMetrics();
 		nFontWidth = fmt.getMaxAdvance();
 		nFontHeight = fmt.getHeight();
-		g.setFont(fntBig);					// set font info
+		g.setFont(fntBig);					// set font info  CHANGED
 	}
 	
 	// This method draws some text to the middle of the screen before/after a game
