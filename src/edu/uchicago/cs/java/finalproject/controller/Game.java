@@ -63,6 +63,10 @@ public class Game implements Runnable, KeyListener {
 	private ArrayList<Tuple> tupMarkForAdds;
 	private boolean bMuted = true;
     private boolean bIntroDone = false;
+    private boolean bInitial = true;
+    private boolean bNewLevel;
+    private boolean bRespawnAfterDeath;
+    private static boolean bFruit = false;
 
     //energizer booleans and variables
     private static boolean isInvincible;
@@ -70,8 +74,8 @@ public class Game implements Runnable, KeyListener {
 
 	private final int PAUSE = 80, // p key
 			QUIT = 81, // q key
-			LEFT = 37, // rotate left; left arrow
-			RIGHT = 39, // rotate right; right arrow
+			LEFT = 37, // turn left; left arrow
+			RIGHT = 39, // turn right; right arrow
 			UP = 38, // move up
             DOWN = 40, // move down
 			START = 83, // s key
@@ -84,8 +88,8 @@ public class Game implements Runnable, KeyListener {
 	// NUM_ENTER = 10, 				// hyp
 	 SPECIAL = 70; 					// fire special weapon;  F key
 
-	private Clip clpThrust;
-	private Clip clpMusicBackground;
+	//private Clip clpThrust;
+	//private Clip clpMusicBackground;
     private static Clip clpSiren;
 
 	//private static final int SPAWN_NEW_SHIP_FLOATER = 1200;
@@ -101,8 +105,8 @@ public class Game implements Runnable, KeyListener {
 		gmpPanel = new GamePanel(DIM);
 		gmpPanel.addKeyListener(this);
 
-		clpThrust = Sound.clipForLoopFactory("whitenoise.wav");
-		clpMusicBackground = Sound.clipForLoopFactory("music-background.wav");
+		//clpThrust = Sound.clipForLoopFactory("whitenoise.wav");
+		//clpMusicBackground = Sound.clipForLoopFactory("music-background.wav");
         clpSiren = Sound.clipForLoopFactory("siren.wav");
 
 	}
@@ -142,9 +146,21 @@ public class Game implements Runnable, KeyListener {
 		// and get the current time
 		long lStartTime = System.currentTimeMillis();
 
+        //set nTick to zero when starting the program
+        nTick = 0;
+
 		// this thread animates the scene
 		while (Thread.currentThread() == thrAnim) {
 			tick();
+
+            //spawn initial stuff after music finishes
+            if (nTick == 100 && bInitial)
+            {
+                bInitial = false;
+                CommandCenter.initialSpawn();
+                nTick = 0;
+            }
+
 			spawnNewShipFloater();
 			gmpPanel.update(gmpPanel.getGraphics()); // update takes the graphics context we must 
 														// surround the sleep() in a try/catch block
@@ -153,6 +169,19 @@ public class Game implements Runnable, KeyListener {
 
 			//this might be a good place to check for collisions
 			checkCollisions();
+
+
+            //spawn pacman and ghosts after a pause after new level or death
+            if(bNewLevel || bRespawnAfterDeath)
+            {
+                if (nTick > 67)
+                {
+                    CommandCenter.spawnAllAfterPause();
+                    bNewLevel = false;
+                    bRespawnAfterDeath = false;
+                    nTick = 0;
+                }
+            }
 			//this might be a god place to check if the level is clear (no more foes)
 			//if the level is clear then spawn some big asteroids -- the number of asteroids 
 			//should increase with the level. 
@@ -175,6 +204,28 @@ public class Game implements Runnable, KeyListener {
 
 	private void checkCollisions() {
 
+//        if (nDotCounter == 70 && !bFruit)
+//        {
+//            if (CommandCenter.getLevel() == 1)
+//            {
+//                CommandCenter.spawnCherry();
+//                bFruit = true;
+//            }
+//        }
+
+        System.out.println(nTick);
+
+        //pause at new level or respawn
+//        if(bNewLevel || bRespawnAfterDeath)
+//        {
+//            if (nTick > 67)
+//            {
+//                System.out.printf("respawning at %d", nTick);
+//                CommandCenter.spawnAllAfterPause();
+//                bNewLevel = false;
+//                bRespawnAfterDeath = false;
+//            }
+//        }
 
         //@formatter:off
 		//for each friend in movFriends
@@ -209,11 +260,19 @@ public class Game implements Runnable, KeyListener {
                 {
                     if (Math.abs(pntPacman.y - pntDot.y) < 6)
                     {
-                        stopLoopingSounds(clpSiren);
-                        nDotCounter = nDotCounter + 1;
-                        CommandCenter.setScore(CommandCenter.getScore() + 10);
-                        tupMarkForRemovals.add(new Tuple(CommandCenter.movDots, dot));
-                        nSirenTimer = nTick;
+                        if (dot instanceof Cherry)
+                        {
+                            CommandCenter.setScore(CommandCenter.getScore() + 100);
+                            tupMarkForRemovals.add(new Tuple(CommandCenter.movDots, dot));
+                        }
+                        else
+                        {
+                            stopLoopingSounds(clpSiren);
+                            CommandCenter.setScore(CommandCenter.getScore() + 10);
+                            tupMarkForRemovals.add(new Tuple(CommandCenter.movDots, dot));
+                            nDotCounter = nDotCounter + 1; // this needs to be after so last dot is removed when level is clear
+                            nSirenTimer = nTick;
+                        }
 
                     }
                 }
@@ -271,6 +330,31 @@ public class Game implements Runnable, KeyListener {
             }
         }
 
+        // eat fruit
+//        for (Movable pacman : CommandCenter.movPacman)
+//        {
+//            for (Movable fruit : CommandCenter.movFruit)
+//            {
+//                Point pntPacman = pacman.getCenter();
+//                Point pntFruit = fruit.getCenter();
+//
+//                if (Math.abs(pntPacman.x - pntFruit.x) < 5)
+//                {
+//                    if (Math.abs(pntPacman.y - pntFruit.y) < 5)
+//                    {
+//                        tupMarkForRemovals.add(new Tuple(CommandCenter.movFruit, fruit));
+//                        //Sound.playSound("pacman_eatfruit.wav");
+//
+//
+//                        if (fruit instanceof Cherry)
+//                        {
+//                            CommandCenter.setScore(CommandCenter.getScore() + 100);
+//                        }
+//
+//                    }
+//                }
+//            }
+//        }
         //handle pac-man and ghost collision
         for (Movable pacman : CommandCenter.movPacman)
         {
@@ -352,6 +436,8 @@ public class Game implements Runnable, KeyListener {
                             }
                             Sound.playSound("pacman_death.wav");
                             nLives -= 1;
+                            nTick = 0;
+                            bRespawnAfterDeath = true;
                             CommandCenter.resetLevel();
 
                         }
@@ -540,6 +626,9 @@ public class Game implements Runnable, KeyListener {
                 CommandCenter.clearAll();
                 stopLoopingSounds(clpSiren, Pacman.getWaka());
                 CommandCenter.startNextLevel(CommandCenter.getLevel());
+                nTick = 0;
+                bNewLevel = true;
+
             }
         }
 		//if (isLevelClear() ){
@@ -651,6 +740,11 @@ public class Game implements Runnable, KeyListener {
     public static void setLives(int nLives)
     {
         Game.nLives = nLives;
+    }
+
+    public static void setFruitBool(boolean bFruit)
+    {
+        Game.bFruit = bFruit;
     }
 
     public static Clip getSiren()

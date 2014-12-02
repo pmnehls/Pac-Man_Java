@@ -362,36 +362,36 @@ public class Inky extends Sprite
             if (!Game.getIsInvincible())
             {
                 //switch modes until perpetual chase cycle
-                if (Game.getnTick() <= 204) //hardcoded for testing 50 + 7*22
+                if (Game.getnTick() <= 154) //hardcoded for testing 50 + 7*22
                 {
                     scatter();
                 }
 
-                if (Game.getnTick() > 204 && Game.getnTick() <= 644)
+                if (Game.getnTick() > 154 && Game.getnTick() <= 594)
                 {
                     chase();
                 }
-                if (Game.getnTick() > 644 && Game.getnTick() <= 798)
+                if (Game.getnTick() > 594 && Game.getnTick() <= 748)
                 {
                     scatter();
                 }
-                if (Game.getnTick() > 798 && Game.getnTick() <= 1238)
+                if (Game.getnTick() > 748 && Game.getnTick() <= 1188)
                 {
                     chase();
                 }
-                if (Game.getnTick() > 1238 && Game.getnTick() <= 1392)
+                if (Game.getnTick() > 1188 && Game.getnTick() <= 1342)
                 {
                     scatter();
                 }
-                if (Game.getnTick() > 1392 && Game.getnTick() <= 1832)
+                if (Game.getnTick() > 1342 && Game.getnTick() <= 1782)
                 {
                     chase();
                 }
-                if (Game.getnTick() > 1832 && Game.getnTick() <= 1986)
+                if (Game.getnTick() > 1782 && Game.getnTick() <= 1936)
                 {
                     scatter();
                 }
-                if (Game.getnTick() > 1986)
+                if (Game.getnTick() > 1936)
                 {
                     chase();
                 }

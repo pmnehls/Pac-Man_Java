@@ -12,7 +12,7 @@ import javax.sound.sampled.Clip;
 public class CommandCenter {
 
 	private static int nNumFalcon;
-	private static int nLevel;
+	private static int nLevel = 1;
 	private static long lScore;
 	private static Falcon falShip;
     private static Pacman pacman;
@@ -32,6 +32,7 @@ public class CommandCenter {
 	public static CopyOnWriteArrayList<Movable> movDots = new CopyOnWriteArrayList<Movable>();
     public static CopyOnWriteArrayList<Movable> movLives = new CopyOnWriteArrayList<Movable>();
 
+
     //create board as a grid of target spaces
     public static TargetSpace[][] grid = new TargetSpace[28][36];
 
@@ -40,27 +41,27 @@ public class CommandCenter {
 	
 	public static void initGame(){
         setMaze();
-        setLevel(1);
+        setLevel(nLevel);
         setTimers();
         setScore(0);
         //setNumFalcons(1);
         //spawnFalcon(true);
         initPacmanLives();
 
-        //playIntro();
-        try
-        {
-            Thread.sleep(4500);
-        } catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
+//        //playIntro();
+//        try
+//        {
+//            Thread.sleep(4500);
+//        } catch (InterruptedException e)
+//        {
+//            e.printStackTrace();
+//        }
 
-        spawnPacman(true);
-        spawnBlinky(true);
-        spawnPinky(true);
-        spawnInky(true);
-        spawnClyde(true);
+//        spawnPacman(true);
+//        spawnBlinky(true);
+//        spawnPinky(true);
+//        spawnInky(true);
+//        spawnClyde(true);
 
 	}
 	
@@ -160,6 +161,12 @@ public class CommandCenter {
             movPacman.add(pacman);
         }
 
+    }
+
+    public static void spawnCherry()
+    {
+        Cherry cherry = new Cherry();
+        movDots.add(cherry);
     }
 
     public static void spawnBlinky(boolean bFirstBlinky)
@@ -265,7 +272,25 @@ public class CommandCenter {
         Game.setnTick(0);
         Game.setDotCounter(0);
         Game.setEnergizerCounter(0);
+        Game.setIsInvincible(false);
+        Game.setFruitBool(false);
 
+    }
+
+    public static void spawnAllAfterPause()
+    {
+        Game.setnTick(0);
+        spawnPacman(true);
+        spawnBlinky(true);
+        spawnPinky(true);
+        spawnInky(true);
+        spawnClyde(true);
+        Game.setIsInvincible(false);
+        Game.getSiren().loop(Clip.LOOP_CONTINUOUSLY);
+    }
+
+    public static void initialSpawn()
+    {
         spawnPacman(true);
         spawnBlinky(true);
         spawnPinky(true);
@@ -278,12 +303,7 @@ public class CommandCenter {
         movLives.clear();
         Game.setnTick(0);
         initPacmanLives();
-        spawnPacman(true);
-        spawnBlinky(true);
-        spawnInky(true);
-        spawnPinky(true);
-        spawnClyde(true);
-        Game.getSiren().loop(Clip.LOOP_CONTINUOUSLY);
+
     }
 
 	public static boolean isPlaying() {

@@ -104,8 +104,8 @@ public class Pacman extends Sprite
         setColor(Color.yellow);
 
         //put pacman in his start location
-        setCenter(new Point(TargetSpace.TS_HEIGHT*(14),
-                TargetSpace.TS_WIDTH*(26) + TargetSpace.TS_WIDTH/2));
+        setCenter(new Point(TargetSpace.TS_WIDTH*(14),
+                TargetSpace.TS_HEIGHT*(26) + TargetSpace.TS_HEIGHT/2));
 
         //with random orientation
         setOrientation(270);

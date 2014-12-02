@@ -14,6 +14,7 @@ import edu.uchicago.cs.java.finalproject.game.model.CommandCenter;
 import edu.uchicago.cs.java.finalproject.game.model.Falcon;
 import edu.uchicago.cs.java.finalproject.game.model.Movable;
 import edu.uchicago.cs.java.finalproject.game.model.TargetSpace;
+import edu.uchicago.cs.java.finalproject.sounds.Sound;
 
 
 public class GamePanel extends Panel {
@@ -250,8 +251,8 @@ public class GamePanel extends Panel {
         try
         {
             Font fntTemp = Font.createFont(Font.TRUETYPE_FONT,new File(strFile));
-
             return fntTemp.deriveFont(18f);
+
         } catch (FontFormatException e)
         {
             e.printStackTrace();
