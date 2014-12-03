@@ -54,7 +54,7 @@ public class Game implements Runnable, KeyListener {
     private static int nTickStore;
     private static int nDotCounter;
     private static int nEnergizerCounter;
-    private static int nScore = 0;
+    //private static int nScore = 0;
     private static int nGhostsEaten;
     private static int nScatterSeconds = 7; //hardcoded for testing
     private static int nChaseSeconds = 20; //hardcoded for testing
@@ -67,6 +67,8 @@ public class Game implements Runnable, KeyListener {
     private boolean bNewLevel;
     private boolean bRespawnAfterDeath;
     private static boolean bFruit = false;
+    private boolean bBonusLife;
+    private static boolean bStarted;
 
     //energizer booleans and variables
     private static boolean isInvincible;
@@ -79,14 +81,12 @@ public class Game implements Runnable, KeyListener {
 			UP = 38, // move up
             DOWN = 40, // move down
 			START = 83, // s key
+            OUIJA = 79, // o key
+            PROTON = 71, // g key
 			FIRE = 32, // space key
-			MUTE = 77, // m-key mute
+			MUTE = 77; // m-key mute
 
-	// for possible future use
-	// HYPER = 68, 					// d key
-	// SHIELD = 65, 				// a key arrow
-	// NUM_ENTER = 10, 				// hyp
-	 SPECIAL = 70; 					// fire special weapon;  F key
+	 //SPECIAL = 70; 					// fire special weapon;  F key
 
 	//private Clip clpThrust;
 	//private Clip clpMusicBackground;
@@ -105,8 +105,7 @@ public class Game implements Runnable, KeyListener {
 		gmpPanel = new GamePanel(DIM);
 		gmpPanel.addKeyListener(this);
 
-		//clpThrust = Sound.clipForLoopFactory("whitenoise.wav");
-		//clpMusicBackground = Sound.clipForLoopFactory("music-background.wav");
+        //initialize siren backgroud sound
         clpSiren = Sound.clipForLoopFactory("siren.wav");
 
 	}
@@ -154,27 +153,26 @@ public class Game implements Runnable, KeyListener {
 			tick();
 
             //spawn initial stuff after music finishes
-            if (nTick == 100 && bInitial)
+            if (nTick == 100 && bInitial && bStarted)
             {
                 bInitial = false;
                 CommandCenter.initialSpawn();
                 nTick = 0;
             }
 
-			spawnNewShipFloater();
+			//spawnNewShipFloater();
 			gmpPanel.update(gmpPanel.getGraphics()); // update takes the graphics context we must 
 														// surround the sleep() in a try/catch block
 														// this simply controls delay time between 
 														// the frames of the animation
 
-			//this might be a good place to check for collisions
 			checkCollisions();
 
 
             //spawn pacman and ghosts after a pause after new level or death
             if(bNewLevel || bRespawnAfterDeath)
             {
-                if (nTick > 67)
+                if (nTick > 67 && bStarted)
                 {
                     CommandCenter.spawnAllAfterPause();
                     bNewLevel = false;
@@ -187,6 +185,16 @@ public class Game implements Runnable, KeyListener {
 			//should increase with the level. 
 
 			checkNewLevel();
+
+            // award a bonus life if player reaches 10,000 points
+            if (CommandCenter.getScore() >= 10000 && !bBonusLife)
+            {
+                Sound.playSound("pacman_extrapac.wav");
+                nLives += 1;
+                CommandCenter.movLives.clear();
+                CommandCenter.initPacmanLives();
+                bBonusLife = true;
+            }
 
 			try {
 				// The total amount of time is guaranteed to be at least ANI_DELAY long.  If processing (update) 
@@ -204,16 +212,14 @@ public class Game implements Runnable, KeyListener {
 
 	private void checkCollisions() {
 
-//        if (nDotCounter == 70 && !bFruit)
-//        {
-//            if (CommandCenter.getLevel() == 1)
-//            {
-//                CommandCenter.spawnCherry();
-//                bFruit = true;
-//            }
-//        }
-
-        System.out.println(nTick);
+        if (nDotCounter == 70 && !bFruit)
+        {
+            if (CommandCenter.getLevel() == 1)
+            {
+                CommandCenter.spawnCherry();
+                bFruit = true;
+            }
+        }
 
         //pause at new level or respawn
 //        if(bNewLevel || bRespawnAfterDeath)
@@ -263,6 +269,7 @@ public class Game implements Runnable, KeyListener {
                         if (dot instanceof Cherry)
                         {
                             CommandCenter.setScore(CommandCenter.getScore() + 100);
+                            Sound.playSound("pacman_eatfruit.wav");
                             tupMarkForRemovals.add(new Tuple(CommandCenter.movDots, dot));
                         }
                         else
@@ -281,7 +288,7 @@ public class Game implements Runnable, KeyListener {
 
 
             //play siren sound if dot sound is done
-            if (nSirenTimer + 40 < nTick)
+            if (nSirenTimer + 40 < nTick && bStarted)
             {
                 clpSiren.loop(Clip.LOOP_CONTINUOUSLY);
             }
@@ -587,6 +594,7 @@ public class Game implements Runnable, KeyListener {
 		CommandCenter.initGame();
 		CommandCenter.setPlaying(true);
 		CommandCenter.setPaused(false);
+        bStarted = true;
 		//if (!bMuted)
 		   // clpMusicBackground.loop(Clip.LOOP_CONTINUOUSLY);
 	}
@@ -672,15 +680,15 @@ public class Game implements Runnable, KeyListener {
         Game.nDotCounter = nDotCounter;
     }
 
-    public static int getScore()
-    {
-        return nScore;
-    }
+//    public static int getScore()
+//    {
+//        return nScore;
+//    }
 
-    public static void setScore(int nScore)
-    {
-        Game.nScore = nScore;
-    }
+    //public static void setScore(int nScore)
+//    {
+//        Game.nScore = nScore;
+//    }
 
     public static int getnScatterSeconds()
     {
@@ -752,6 +760,11 @@ public class Game implements Runnable, KeyListener {
         return Game.clpSiren;
     }
 
+    public static void setStarted(boolean bStarted)
+    {
+        Game.bStarted = bStarted;
+    }
+
     // Varargs for stopping looping-music-clips
 	private static void stopLoopingSounds(Clip... clpClips) {
 		for (Clip clp : clpClips) {
@@ -802,6 +815,10 @@ public class Game implements Runnable, KeyListener {
             case DOWN:
                 pacman.turnDown();
                 break;
+            case OUIJA:
+                CommandCenter.ouija(nTick);
+            case PROTON:
+                pacman.protonPack();
 
 			// possible future use
 			// case KILL:

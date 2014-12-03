@@ -227,6 +227,24 @@ public class GamePanel extends Panel {
 		grpOff.drawString(strDisplay,
 				(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4
 						+ nFontHeight + 240);
+
+
+        strDisplay = "------BONUS FEATURES------";
+        grpOff.drawString(strDisplay,
+                (Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4
+                        + nFontHeight + 280);
+
+        strDisplay = "'O' for Ouija";
+        grpOff.drawString(strDisplay,
+                (Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4
+                        + nFontHeight + 320);
+
+        strDisplay = "G' for Proton-Pack";
+        grpOff.drawString(strDisplay,
+                (Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4
+                        + nFontHeight + 320);
+
+
 		//strDisplay = "left pinkie on 'A' for Shield";
 		//grpOff.drawString(strDisplay,
 		//		(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4

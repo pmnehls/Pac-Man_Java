@@ -155,7 +155,8 @@ public class Blinky extends Sprite
                 if (Game.getTickStore() + (23 * (Game.getScaredSeconds() - 3)) > Game.getnTick())
                 {
                     setColor(Color.BLUE);
-                } else if ((Game.getTickStore() + (23 * (Game.getScaredSeconds() - 1)) > Game.getnTick()))
+                }
+                else if ((Game.getTickStore() + (23 * (Game.getScaredSeconds() - 1)) > Game.getnTick()))
                 {
                     //flash slow with 3 seconds left
                     if (Game.getnTick() % 4 == 0 || Game.getnTick() % 4 == 1)

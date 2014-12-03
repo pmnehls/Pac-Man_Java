@@ -18,39 +18,17 @@ public class Pacman extends Sprite
     // FIELDS
     // ==============================================================
 
-    //private final double THRUST = .65;
-
-    //final int DEGREE_STEP = 7;
-
-    //private boolean bShield = false;
-    //private boolean bFlame = false;
-    //private boolean bProtected; //for fade in and out
-
-   // private boolean bThrusting = false;
-    //private boolean bTurningRight = false;
-    //private boolean bTurningLeft = false;
-
-    //private boolean bFacingLeft = true;
-    //private boolean bFacingRight = false;
-    //private boolean bFacingUp = false;
-    //private boolean bFacingDown = false;
-
     private static Clip clpWakawaka;
 
-    //private TargetSpace currentSpace;
     private static int spaceX;
     private static int spaceY;
-    //private double dPacManSpeed = 4.0;
     private int nPacManSpeed = 3;
-    //private int nShield;
 
-    private final double[] FLAME = { 23 * Math.PI / 24 + Math.PI / 2,
-            Math.PI + Math.PI / 2, 25 * Math.PI / 24 + Math.PI / 2 };
+    private boolean bMoving;
 
-//    private int[] nXFlames = new int[FLAME.length];
-//    private int[] nYFlames = new int[FLAME.length];
-//
-//    private Point[] pntFlames = new Point[FLAME.length];
+    //private final double[] FLAME = { 23 * Math.PI / 24 + Math.PI / 2,
+    //        Math.PI + Math.PI / 2, 25 * Math.PI / 24 + Math.PI / 2 };
+
 
 
     // ==============================================================
@@ -107,10 +85,10 @@ public class Pacman extends Sprite
         setCenter(new Point(TargetSpace.TS_WIDTH*(14),
                 TargetSpace.TS_HEIGHT*(26) + TargetSpace.TS_HEIGHT/2));
 
-        //with random orientation
+        //facing left
         setOrientation(270);
 
-        //this is the size of the falcon
+        //this is the size of Pacman
         setRadius(12);
 
         //set up dot eating sound
@@ -129,6 +107,86 @@ public class Pacman extends Sprite
         Point currPnt = getPacmanSpaceCoord();
         spaceX = currPnt.x;
         spaceY = currPnt.y;
+
+        if (Game.getnTick() % 2 == 0) //&& bMoving)
+        {
+            ArrayList<Point> pntCs = new ArrayList<Point>();
+
+            pntCs.add(new Point(3, 7));
+            pntCs.add(new Point(3, 6));
+            pntCs.add(new Point(5, 6));
+            pntCs.add(new Point(5, 5));
+            pntCs.add(new Point(6, 5));
+            pntCs.add(new Point(6, 3));
+            pntCs.add(new Point(7, 3));
+            pntCs.add(new Point(7, -1));
+            pntCs.add(new Point(6, -1));
+            pntCs.add(new Point(6, -3));
+            pntCs.add(new Point(5, -3));
+            pntCs.add(new Point(5, -4));
+            pntCs.add(new Point(5, -5));
+            pntCs.add(new Point(3, -5));
+            pntCs.add(new Point(3, -6));
+            pntCs.add(new Point(-2, -6));
+            pntCs.add(new Point(-2, -5));
+            pntCs.add(new Point(-4, -5));
+            pntCs.add(new Point(-4, -4));
+            pntCs.add(new Point(-5, -4));
+            pntCs.add(new Point(-5, -2));
+            pntCs.add(new Point(-6, -2));
+            pntCs.add(new Point(-6, 3));
+            pntCs.add(new Point(-5, 3));
+            pntCs.add(new Point(-5, 5));
+            pntCs.add(new Point(-4, 5));
+            pntCs.add(new Point(-4, 6));
+            pntCs.add(new Point(-2, 6));
+            pntCs.add(new Point(-2, 7));
+
+            assignPolarPoints(pntCs);
+        }
+        else
+        {
+            ArrayList<Point> pntCs = new ArrayList<Point>();
+
+            pntCs.add(new Point(3, 7));
+            pntCs.add(new Point(3, 6));
+            pntCs.add(new Point(5, 6));
+            pntCs.add(new Point(5, 5));
+            pntCs.add(new Point(6, 5));
+            pntCs.add(new Point(6, 3));
+            pntCs.add(new Point(4, 3));
+            pntCs.add(new Point(4, 2));
+            pntCs.add(new Point(1, 2));
+            pntCs.add(new Point(1, 1));
+            pntCs.add(new Point(-2, 1));
+            pntCs.add(new Point(-2, 0));
+            pntCs.add(new Point(1, 0));
+            pntCs.add(new Point(1, -1));
+            pntCs.add(new Point(4, -1));
+            pntCs.add(new Point(4, -2));
+            pntCs.add(new Point(6, -2));
+            pntCs.add(new Point(6, -4));
+            pntCs.add(new Point(5, -4));
+            pntCs.add(new Point(5, -5));
+            pntCs.add(new Point(3, -5));
+            pntCs.add(new Point(3, -6));
+            pntCs.add(new Point(-2, -6));
+            pntCs.add(new Point(-2, -5));
+            pntCs.add(new Point(-4, -5));
+            pntCs.add(new Point(-4, -4));
+            pntCs.add(new Point(-5, -4));
+            pntCs.add(new Point(-5, -2));
+            pntCs.add(new Point(-6, -2));
+            pntCs.add(new Point(-6, 3));
+            pntCs.add(new Point(-5, 3));
+            pntCs.add(new Point(-5, 5));
+            pntCs.add(new Point(-4, 5));
+            pntCs.add(new Point(-4, 6));
+            pntCs.add(new Point(-2, 6));
+            pntCs.add(new Point(-2, 7));
+
+            assignPolarPoints(pntCs);
+        }
 
         switch(this.getOrientation())
         {
@@ -155,36 +213,7 @@ public class Pacman extends Sprite
         }
 
 
-        //if (currentSpace.getIsEnergizer())
-//        {
-//
-//        }
-//        if (bFacingLeft)
-//        {
-//           super.setCenter(getCenter());
-//        }
-//        if (bThrusting) {
-//            bFlame = true;
-//            double dAdjustX = Math.cos(Math.toRadians(getOrientation()))
-//                    * THRUST;
-//            double dAdjustY = Math.sin(Math.toRadians(getOrientation()))
-//                    * THRUST;
-//            setDeltaX(getDeltaX() + dAdjustX);
-//            setDeltaY(getDeltaY() + dAdjustY);
-//        }
-//        if (bTurningLeft) {
-//
-//            if (getOrientation() <= 0 && bTurningLeft) {
-//                setOrientation(360);
-//            }
-//            setOrientation(getOrientation() - DEGREE_STEP);
-//        }
-//        if (bTurningRight) {
-//            if (getOrientation() >= 360 && bTurningRight) {
-//                setOrientation(0);
-//            }
-//            setOrientation(getOrientation() + DEGREE_STEP);
-//        }
+
     } //end move
 
     public void moveLeft()
@@ -503,5 +532,10 @@ public class Pacman extends Sprite
     public static Clip getWaka()
     {
         return Pacman.clpWakawaka;
+    }
+
+    public static void protonPack()
+    {
+        Sound.playSound("ghostbusters_theme.wav");
     }
 }

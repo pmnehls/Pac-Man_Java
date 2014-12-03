@@ -280,6 +280,7 @@ public class CommandCenter {
     public static void spawnAllAfterPause()
     {
         Game.setnTick(0);
+        setTimers();
         spawnPacman(true);
         spawnBlinky(true);
         spawnPinky(true);
@@ -291,6 +292,7 @@ public class CommandCenter {
 
     public static void initialSpawn()
     {
+        setTimers();
         spawnPacman(true);
         spawnBlinky(true);
         spawnPinky(true);
@@ -303,7 +305,25 @@ public class CommandCenter {
         movLives.clear();
         Game.setnTick(0);
         initPacmanLives();
+        setTimers();
 
+    }
+
+    public static void ouija(int nTick)
+    {
+        spawnBlinky(false);
+//
+//         switch(nTick % 4)
+//        {
+////            case 0: spawnBlinky(true);
+////                break;
+////            case 1: spawnInky(true);
+////                break;
+////            case 2: spawnPinky(true);
+////                break;
+//            default: spawnBlinky(false);
+//                break;
+//        }
     }
 
 	public static boolean isPlaying() {
@@ -324,7 +344,8 @@ public class CommandCenter {
 	
 	public static boolean isGameOver() {		//if pacman's lives = 0, then game over
 		if (Game.getLives() == 0) {
-			return true;
+			Game.setStarted(false);
+            return true;
 		}
 		return false;
 	}
