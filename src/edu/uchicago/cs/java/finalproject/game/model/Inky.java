@@ -460,8 +460,7 @@ public class Inky extends Sprite
                 toTurnDown = true;
                 bTurnsQueued = true;
                 Point turn = AL.getTargetCenter();
-                nXTurn = turn.x; //+ TargetSpace.TS_WIDTH / 2;  //DEBUG check why this needs to be added
-
+                nXTurn = turn.x;
             }
             if (DL.getIsWall() && L.getIsWall() && !LU.getIsWall()) // turn up at corner
             {
@@ -782,14 +781,14 @@ public class Inky extends Sprite
                     toTurnLeft = true;
                     bTurnsQueued = true;
                     Point turn = AD.getTargetCenter();
-                    nYTurn = turn.y; //DEBUG
+                    nYTurn = turn.y;
                 }
                 else
                 {
                     toTurnRight = true;
                     bTurnsQueued = true;
                     Point turn = AD.getTargetCenter();
-                    nYTurn = turn.y; //debug
+                    nYTurn = turn.y;
                 }
             }
             if (DL.getIsWall() && !D.getIsWall() && !RD.getIsWall()) //3 way intersection down right
@@ -982,7 +981,7 @@ public class Inky extends Sprite
                     toTurnDown = true;
                     bTurnsQueued = true;
                     Point turn = AL.getTargetCenter();
-                    nXTurn = turn.x; //+ TargetSpace.TS_WIDTH / 2;  //DEBUG check why this needs to be added
+                    nXTurn = turn.x;
 
                 }
                 if (DL.getIsWall() && L.getIsWall() && !LU.getIsWall()) // turn up at corner
@@ -1276,7 +1275,7 @@ public class Inky extends Sprite
                     toTurnLeft = true;
                     bTurnsQueued = true;
                     Point turn = AD.getTargetCenter();
-                    nYTurn = turn.y;  //CHANGED TO DEBUG
+                    nYTurn = turn.y;
                 }
                 if (DL.getIsWall() && D.getIsWall() && !RD.getIsWall()) //turn right at corner
                 {
@@ -1298,13 +1297,13 @@ public class Inky extends Sprite
                         toTurnLeft = true;
                         bTurnsQueued = true;
                         Point turn = AD.getTargetCenter();
-                        nYTurn = turn.y; //DEBUG
+                        nYTurn = turn.y;
                     } else
                     {
                         toTurnRight = true;
                         bTurnsQueued = true;
                         Point turn = AD.getTargetCenter();
-                        nYTurn = turn.y; //debug
+                        nYTurn = turn.y;
                     }
                 }
                 if (DL.getIsWall() && !D.getIsWall() && !RD.getIsWall()) //3 way intersection down right
@@ -1739,11 +1738,6 @@ public class Inky extends Sprite
         double leg1 = Math.abs(a.x - b.x);
         double leg2 = Math.abs(a.y - b.y);
         return (Math.sqrt((leg1*leg1) + (leg2*leg2)));
-    }
-
-    public static void setInsideBox(boolean bInsideBox)
-    {
-        Inky.bInsideBox = bInsideBox;
     }
 
     public void setRespawn(boolean bRespawn)

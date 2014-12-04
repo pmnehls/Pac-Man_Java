@@ -43,22 +43,7 @@ public class Dot extends Sprite
     @Override
     public void draw(Graphics g) {
         super.draw(g);
-        //fill this polygon (with whatever color it has)
         g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
-        //now draw a white border
-        //g.setColor(Color.WHITE);
-        //g.drawPolygon(getXcoords(), getYcoords(), dDegrees.length);
     }
-
-    public int getDotX()
-    {
-        return nDotX;
-    }
-
-    public int getDotY()
-    {
-        return nDotY;
-    }
-
 
 }

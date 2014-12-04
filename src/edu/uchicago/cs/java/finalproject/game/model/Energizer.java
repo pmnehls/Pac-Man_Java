@@ -45,17 +45,7 @@ public class Energizer extends Sprite
 
     public void draw(Graphics g) {
         super.draw(g);
-        //fill this polygon (with whatever color it has)
         g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
     }
 
-    public int getEnergizerX()
-    {
-        return nEnergizerX;
-    }
-
-    public int getEnergizerY()
-    {
-        return nEnergizerY;
-    }
 }

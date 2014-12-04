@@ -214,11 +214,9 @@ public class Game implements Runnable, KeyListener {
 
         if (nDotCounter == 70 && !bFruit)
         {
-            if (CommandCenter.getLevel() == 1)
-            {
+
                 CommandCenter.spawnCherry();
                 bFruit = true;
-            }
         }
 
         //pause at new level or respawn
@@ -337,31 +335,113 @@ public class Game implements Runnable, KeyListener {
             }
         }
 
-        // eat fruit
-//        for (Movable pacman : CommandCenter.movPacman)
-//        {
-//            for (Movable fruit : CommandCenter.movFruit)
-//            {
-//                Point pntPacman = pacman.getCenter();
-//                Point pntFruit = fruit.getCenter();
-//
-//                if (Math.abs(pntPacman.x - pntFruit.x) < 5)
-//                {
-//                    if (Math.abs(pntPacman.y - pntFruit.y) < 5)
-//                    {
-//                        tupMarkForRemovals.add(new Tuple(CommandCenter.movFruit, fruit));
-//                        //Sound.playSound("pacman_eatfruit.wav");
-//
-//
-//                        if (fruit instanceof Cherry)
-//                        {
-//                            CommandCenter.setScore(CommandCenter.getScore() + 100);
-//                        }
-//
-//                    }
-//                }
-//            }
-//        }
+
+
+        //handle proton pack
+        if (CommandCenter.getProton())
+        {
+            if(CommandCenter.getProtonTick() > nTick)
+            {
+                CommandCenter.setProton(false);
+            }
+            else if(CommandCenter.getProtonTick() + 88 < nTick)
+            {
+                CommandCenter.setProton(false);
+            }
+
+            boolean bZapped = false;
+            for (Movable pacman: CommandCenter.movPacman)
+            {
+                for (Movable ghost : CommandCenter.movFoes)
+                {
+                    Point pntPacman = pacman.getCenter();
+                    Point pntGhost = ghost.getCenter();
+                    int nPacDirection = pacman.getOrientation();
+                    if (nPacDirection == 0)
+                    {
+                        if((pntPacman.x == pntGhost.x) && pntPacman.y - pntGhost.y < 30 && pntPacman.y - pntGhost.y > 0)
+                        {
+                            bZapped = true;
+                        }
+                        else
+                        {
+                            bZapped = false;
+                        }
+                    }
+                    else if (nPacDirection == 90)
+                    {
+                        if((Math.abs(pntPacman.y - pntGhost.y) < 2 )&& (pntGhost.x - pntPacman.x < 30) && (pntGhost.x - pntPacman.x > 0))
+                        {
+                            bZapped = true;
+                        }
+                        else
+                        {
+                            bZapped = false;
+                        }
+                    }
+                    else if (nPacDirection == 180)
+                    {
+                        if((pntPacman.x == pntGhost.x) && (pntGhost.y - pntPacman.y < 30) && (pntGhost.y - pntPacman.y > 0))
+                        {
+                            bZapped = true;
+                        }
+                        else
+                        {
+                            bZapped = false;
+                        }
+                    }
+                    else if (nPacDirection == 270)
+                    {
+                        if((pntPacman.y == pntGhost.y) && (pntPacman.x - pntGhost.x < 30) && (pntPacman.x - pntGhost.x > 0))
+                        {
+                            bZapped = true;
+                        }
+                        else
+                        {
+                            bZapped = false;
+                        }
+                    }
+
+                    //remove and respawn ghost if zapped
+                    if(bZapped)
+                    {
+                        Sound.playSound("floop2_x.wav");
+                        if (ghost instanceof Blinky)
+                        {
+                            tupMarkForRemovals.add(new Tuple(CommandCenter.movFoes, ghost));
+                            CommandCenter.spawnBlinky(false);
+
+                        }
+                        else if (ghost instanceof Pinky)
+                        {
+                            tupMarkForRemovals.add(new Tuple(CommandCenter.movFoes, ghost));
+                            CommandCenter.spawnPinky(false);
+                        }
+                        else if (ghost instanceof Inky)
+                        {
+                            tupMarkForRemovals.add(new Tuple(CommandCenter.movFoes, ghost));
+                            CommandCenter.spawnInky(false);
+                        }
+                        else if (ghost instanceof Clyde)
+                        {
+                            tupMarkForRemovals.add(new Tuple(CommandCenter.movFoes, ghost));
+                            CommandCenter.spawnClyde(false);
+                        }
+                    }
+
+                    if(!CommandCenter.getProton())
+                    {
+                        if(CommandCenter.movProton.size() != 0)
+                        tupMarkForRemovals.add(new Tuple(CommandCenter.movProton, CommandCenter.movProton.get(0)));
+
+                    }
+
+                }
+            }
+        }
+
+
+
         //handle pac-man and ghost collision
         for (Movable pacman : CommandCenter.movPacman)
         {
@@ -818,7 +898,10 @@ public class Game implements Runnable, KeyListener {
             case OUIJA:
                 CommandCenter.ouija(nTick);
             case PROTON:
-                pacman.protonPack();
+                if (!CommandCenter.getProton())
+                {
+                    CommandCenter.protonPack();
+                }
 
 			// possible future use
 			// case KILL:

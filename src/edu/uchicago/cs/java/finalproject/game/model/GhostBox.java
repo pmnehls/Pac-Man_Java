@@ -8,16 +8,11 @@ import java.util.ArrayList;
  */
 public class GhostBox extends Sprite
 {
-    private int x;
-    private int y;
     private boolean isLid;
 
     public GhostBox(int x, int y)
     {
         super();
-
-        this.x = x;
-        this.y = y;
 
         if (y == 16 && (x == 14 || x == 15))
         {
@@ -53,7 +48,7 @@ public class GhostBox extends Sprite
         int nHeight = TargetSpace.TS_HEIGHT;
         int nWidth = TargetSpace.TS_WIDTH;
 
-        setCenter(new Point(nHeight * (x - 1) + nHeight/2, nWidth * (y - 1) + nWidth/2));
+        setCenter(new Point(nWidth * (x - 1) + nWidth/2, nHeight * (y - 1) + nHeight/2));
 
     }
 

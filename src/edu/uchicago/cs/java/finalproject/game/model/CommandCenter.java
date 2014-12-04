@@ -7,8 +7,6 @@ import edu.uchicago.cs.java.finalproject.sounds.Sound;
 
 import javax.sound.sampled.Clip;
 
-// I only want one Command Center and therefore this is a perfect candidate for static
-// Able to get access to methods and my movMovables ArrayList from the static context.
 public class CommandCenter {
 
 	private static int nNumFalcon;
@@ -19,8 +17,10 @@ public class CommandCenter {
 	private static boolean bPlaying;
     private static boolean bIntroDone = false;
 	private static boolean bPaused;
-    private int nSecondTimer;
-    private int nScore;
+    //private int nSecondTimer;
+    //private int nScore;
+    private static int nProtonTick;
+    private static boolean bProton;
 
 	// These ArrayLists are thread-safe
 	public static CopyOnWriteArrayList<Movable> movDebris = new CopyOnWriteArrayList<Movable>();
@@ -31,6 +31,7 @@ public class CommandCenter {
 	public static CopyOnWriteArrayList<Movable> movEnergizers = new CopyOnWriteArrayList<Movable>();
 	public static CopyOnWriteArrayList<Movable> movDots = new CopyOnWriteArrayList<Movable>();
     public static CopyOnWriteArrayList<Movable> movLives = new CopyOnWriteArrayList<Movable>();
+    public static CopyOnWriteArrayList<Movable> movProton = new CopyOnWriteArrayList<Movable>();
 
 
     //create board as a grid of target spaces
@@ -44,24 +45,7 @@ public class CommandCenter {
         setLevel(nLevel);
         setTimers();
         setScore(0);
-        //setNumFalcons(1);
-        //spawnFalcon(true);
         initPacmanLives();
-
-//        //playIntro();
-//        try
-//        {
-//            Thread.sleep(4500);
-//        } catch (InterruptedException e)
-//        {
-//            e.printStackTrace();
-//        }
-
-//        spawnPacman(true);
-//        spawnBlinky(true);
-//        spawnPinky(true);
-//        spawnInky(true);
-//        spawnClyde(true);
 
 	}
 	
@@ -174,7 +158,9 @@ public class CommandCenter {
         if (bFirstBlinky)
         {
             Blinky blinky = new Blinky(true);
+            //Eyes eyes = new Eyes(blinky);
             movFoes.add(blinky);
+            //movDebris.add(eyes);
         }
         else
         {
@@ -233,27 +219,6 @@ public class CommandCenter {
 
     }
 
-    public static void setScatterTimer()
-    {
-
-    }
-
-    public static void setChaseTimer()
-    {
-
-    }
-
-	public static void spawnFalcon(boolean bFirst) {
-
-		if (getNumFalcons() != 0) {
-			falShip = new Falcon();
-			movFriends.add(falShip);
-			if (!bFirst)
-			    setNumFalcons(getNumFalcons() - 1);
-		}
-
-	}
-	
 	public static void clearAll(){
 		movDebris.clear();
 		movFriends.clear();
@@ -262,6 +227,7 @@ public class CommandCenter {
         movEnergizers.clear();
 		movFloaters.clear();
         movPacman.clear();
+        movProton.clear();
 	}
 
     public static void startNextLevel(int nLevel)
@@ -303,6 +269,7 @@ public class CommandCenter {
     public static void resetLevel()
     {
         movLives.clear();
+        movProton.clear();
         Game.setnTick(0);
         initPacmanLives();
         setTimers();
@@ -324,6 +291,21 @@ public class CommandCenter {
 //            default: spawnBlinky(false);
 //                break;
 //        }
+    }
+
+    public static void protonPack()
+    {
+        Sound.playSound("export.wav");
+        if (movPacman.size() != 0)
+        {
+            pacman = (Pacman)movPacman.get(0);
+            Proton proton = new Proton(pacman);
+            proton.setOrientation(pacman.getOrientation());
+            movProton.add(proton);
+            CommandCenter.nProtonTick =  Game.getnTick();
+            bProton = true;
+
+        }
     }
 
 	public static boolean isPlaying() {
@@ -366,17 +348,14 @@ public class CommandCenter {
 		nLevel = n;
 	}
 
-	public static int getNumFalcons() {
-		return nNumFalcon;
-	}
+	//public static int getNumFalcons() {
+	//	return nNumFalcon;
+	//}
 
-	public static void setNumFalcons(int nParam) {
-		nNumFalcon = nParam;
-	}
-	
-	public static Falcon getFalcon(){
-		return falShip;
-	}
+
+	//public static Falcon getFalcon(){
+	//	return falShip;
+	//}
 
     public static Pacman getPacman() { return pacman;}
 
@@ -384,24 +363,20 @@ public class CommandCenter {
 		falShip = falParam;
 	}
 
-	public static CopyOnWriteArrayList<Movable> getMovDebris() {
-		return movDebris;
-	}
+    public static boolean getProton()
+    {
+        return CommandCenter.bProton;
+    }
 
-    public static CopyOnWriteArrayList<Movable> getMovDots() {return movDots;}
+    public static void setProton(boolean bProton)
+    {
+        CommandCenter.bProton = bProton;
+    }
 
-	public static CopyOnWriteArrayList<Movable> getMovFriends() {
-		return movFriends;
-	}
+    public static int getProtonTick()
+    {
+        return CommandCenter.nProtonTick;
+    }
 
-
-	public static CopyOnWriteArrayList<Movable> getMovFoes() {
-		return movFoes;
-	}
-
-
-	public static CopyOnWriteArrayList<Movable> getMovFloaters() {
-		return movFloaters;
-	}
 
 }

@@ -24,7 +24,7 @@ public class Pacman extends Sprite
     private static int spaceY;
     private int nPacManSpeed = 3;
 
-    private boolean bMoving;
+    private boolean bMoving = true;
 
     //private final double[] FLAME = { 23 * Math.PI / 24 + Math.PI / 2,
     //        Math.PI + Math.PI / 2, 25 * Math.PI / 24 + Math.PI / 2 };
@@ -108,7 +108,8 @@ public class Pacman extends Sprite
         spaceX = currPnt.x;
         spaceY = currPnt.y;
 
-        if (Game.getnTick() % 2 == 0) //&& bMoving)
+        //set pacman's image based on nTick to animate
+        if (Game.getnTick() % 4 == 2 && bMoving)
         {
             ArrayList<Point> pntCs = new ArrayList<Point>();
 
@@ -144,7 +145,7 @@ public class Pacman extends Sprite
 
             assignPolarPoints(pntCs);
         }
-        else
+        else if ((Game.getnTick() % 4 == 1 && bMoving )|| (Game.getnTick() % 4 == 3 && bMoving))
         {
             ArrayList<Point> pntCs = new ArrayList<Point>();
 
@@ -170,6 +171,53 @@ public class Pacman extends Sprite
             pntCs.add(new Point(5, -5));
             pntCs.add(new Point(3, -5));
             pntCs.add(new Point(3, -6));
+            pntCs.add(new Point(-2, -6));
+            pntCs.add(new Point(-2, -5));
+            pntCs.add(new Point(-4, -5));
+            pntCs.add(new Point(-4, -4));
+            pntCs.add(new Point(-5, -4));
+            pntCs.add(new Point(-5, -2));
+            pntCs.add(new Point(-6, -2));
+            pntCs.add(new Point(-6, 3));
+            pntCs.add(new Point(-5, 3));
+            pntCs.add(new Point(-5, 5));
+            pntCs.add(new Point(-4, 5));
+            pntCs.add(new Point(-4, 6));
+            pntCs.add(new Point(-2, 6));
+            pntCs.add(new Point(-2, 7));
+
+            assignPolarPoints(pntCs);
+        }
+        else
+        {
+            ArrayList<Point> pntCs = new ArrayList<Point>();
+
+            pntCs.add(new Point(2, 7));
+            pntCs.add(new Point(2, 6));
+            pntCs.add(new Point(4, 6));
+            pntCs.add(new Point(4, 5));
+            pntCs.add(new Point(5, 5));
+            pntCs.add(new Point(5, 4));
+            pntCs.add(new Point(3, 4));
+            pntCs.add(new Point(3, 3));
+            pntCs.add(new Point(2, 3));
+            pntCs.add(new Point(2, 2));
+            pntCs.add(new Point(0, 2));
+            pntCs.add(new Point(0, 1));
+            pntCs.add(new Point(-2, 1));
+            pntCs.add(new Point(-2, 0));
+            pntCs.add(new Point(0, 0));
+            pntCs.add(new Point(0, -1));
+            pntCs.add(new Point(2, -1));
+            pntCs.add(new Point(2, -2));
+            pntCs.add(new Point(3, -2));
+            pntCs.add(new Point(3, -3));
+            pntCs.add(new Point(5, -3));
+            pntCs.add(new Point(5, -4));
+            pntCs.add(new Point(4, -4));
+            pntCs.add(new Point(4, -5));
+            pntCs.add(new Point(2, -5));
+            pntCs.add(new Point(2, -6));
             pntCs.add(new Point(-2, -6));
             pntCs.add(new Point(-2, -5));
             pntCs.add(new Point(-4, -5));
@@ -226,6 +274,7 @@ public class Pacman extends Sprite
         {
             pnt.x = pnt.x - nPacManSpeed;
             setCenter(pnt);
+            bMoving = true;
         }
         else
         {
@@ -233,6 +282,11 @@ public class Pacman extends Sprite
             {
                 pnt.x = pnt.x - nPacManSpeed;
                 setCenter(pnt);
+                bMoving = true;
+            }
+            else
+            {
+                bMoving = false;
             }
         }
 
@@ -248,6 +302,7 @@ public class Pacman extends Sprite
         {
             pnt.y = pnt.y - nPacManSpeed;
             setCenter(pnt);
+            bMoving = true;
         }
         else
         {
@@ -255,6 +310,11 @@ public class Pacman extends Sprite
             {
                 pnt.y = pnt.y - nPacManSpeed;
                 setCenter(pnt);
+                bMoving = true;
+            }
+            else
+            {
+                bMoving = false;
             }
         }
     }
@@ -269,6 +329,7 @@ public class Pacman extends Sprite
         {
             pnt.x = pnt.x + nPacManSpeed;
             setCenter(pnt);
+            bMoving = true;
         }
         else
         {
@@ -276,6 +337,11 @@ public class Pacman extends Sprite
             {
                 pnt.x = pnt.x + nPacManSpeed;
                 setCenter(pnt);
+                bMoving = true;
+            }
+            else
+            {
+                bMoving = false;
             }
         }
     }
@@ -290,6 +356,7 @@ public class Pacman extends Sprite
         {
             pnt.y = pnt.y + nPacManSpeed;
             setCenter(pnt);
+            bMoving = true;
         }
         else
         {
@@ -297,6 +364,11 @@ public class Pacman extends Sprite
             {
                 pnt.y = pnt.y + nPacManSpeed;
                 setCenter(pnt);
+                bMoving = true;
+            }
+            else
+            {
+                bMoving = false;
             }
         }
     }
@@ -534,8 +606,4 @@ public class Pacman extends Sprite
         return Pacman.clpWakawaka;
     }
 
-    public static void protonPack()
-    {
-        Sound.playSound("ghostbusters_theme.wav");
-    }
 }

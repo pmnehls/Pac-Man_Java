@@ -210,7 +210,7 @@ public class Clyde extends Sprite
                     bFirstScatter = false;
                     bFirstChase = false;
                     bFirstScared = false;
-                    nGhostSpeed = 3; //hardcoded for now
+                    nGhostSpeed = 3;
                 }
             }
             else if (Game.getIsInvincible())
@@ -365,7 +365,7 @@ public class Clyde extends Sprite
             if (!Game.getIsInvincible())
             {
                 //switch modes until perpetual chase cycle
-                if (Game.getnTick() <= 154) //hardcoded for testing 50 + 7*22
+                if (Game.getnTick() <= 154)
                 {
                     scatter();
                 }
@@ -462,7 +462,7 @@ public class Clyde extends Sprite
                 toTurnDown = true;
                 bTurnsQueued = true;
                 Point turn = AL.getTargetCenter();
-                nXTurn = turn.x; //+ TargetSpace.TS_WIDTH / 2;  //DEBUG check why this needs to be added
+                nXTurn = turn.x;
 
             }
             if (DL.getIsWall() && L.getIsWall() && !LU.getIsWall()) // turn up at corner
@@ -784,14 +784,14 @@ public class Clyde extends Sprite
                     toTurnLeft = true;
                     bTurnsQueued = true;
                     Point turn = AD.getTargetCenter();
-                    nYTurn = turn.y; //DEBUG
+                    nYTurn = turn.y;
                 }
                 else
                 {
                     toTurnRight = true;
                     bTurnsQueued = true;
                     Point turn = AD.getTargetCenter();
-                    nYTurn = turn.y; //debug
+                    nYTurn = turn.y;
                 }
             }
             if (DL.getIsWall() && !D.getIsWall() && !RD.getIsWall()) //3 way intersection down right
@@ -916,7 +916,7 @@ public class Clyde extends Sprite
                     toTurnDown = true;
                     bTurnsQueued = true;
                     Point turn = AL.getTargetCenter();
-                    nXTurn = turn.x; //+ TargetSpace.TS_WIDTH / 2;  //DEBUG check why this needs to be added
+                    nXTurn = turn.x;
 
                 }
                 if (DL.getIsWall() && L.getIsWall() && !LU.getIsWall()) // turn up at corner
@@ -1210,7 +1210,7 @@ public class Clyde extends Sprite
                     toTurnLeft = true;
                     bTurnsQueued = true;
                     Point turn = AD.getTargetCenter();
-                    nYTurn = turn.y;  //CHANGED TO DEBUG
+                    nYTurn = turn.y;
                 }
                 if (DL.getIsWall() && D.getIsWall() && !RD.getIsWall()) //turn right at corner
                 {
@@ -1232,13 +1232,13 @@ public class Clyde extends Sprite
                         toTurnLeft = true;
                         bTurnsQueued = true;
                         Point turn = AD.getTargetCenter();
-                        nYTurn = turn.y; //DEBUG
+                        nYTurn = turn.y;
                     } else
                     {
                         toTurnRight = true;
                         bTurnsQueued = true;
                         Point turn = AD.getTargetCenter();
-                        nYTurn = turn.y; //debug
+                        nYTurn = turn.y;
                     }
                 }
                 if (DL.getIsWall() && !D.getIsWall() && !RD.getIsWall()) //3 way intersection down right

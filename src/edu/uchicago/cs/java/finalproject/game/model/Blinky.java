@@ -39,18 +39,10 @@ public class Blinky extends Sprite
     private boolean bFirstScatter;
     private boolean bFirstChase;
     private boolean bFirstScared;
-    private boolean bModeSwitch;
     private boolean bInsideBox;
     private boolean bRespawn;
 
-    //store nTick when mode switch is triggered
-    private int nTickAtSwitch;
-
-
-
-
     //scatter target square information
-    //private final Point scatterTargetPixel = new Point(TargetSpace.TS_HEIGHT*26 - TargetSpace.TS_HEIGHT/2,TargetSpace.TS_HEIGHT/2);
     private final Point scatterTargetSquare = new Point(26, 1);
 
     public Blinky(boolean bFirst)
@@ -58,7 +50,6 @@ public class Blinky extends Sprite
         super();
 
         ArrayList<Point> pntCs = new ArrayList<Point>();
-
 
         pntCs.add(new Point(-7, -7));
         pntCs.add(new Point(-6, -7));
@@ -113,15 +104,16 @@ public class Blinky extends Sprite
         {
             setCenter(pGhostCenter);
         }
-        else
+        else //else put him inside box
         {
             bInsideBox = true;
             setCenter(new Point(TargetSpace.TS_WIDTH*(14) - 1,
                     TargetSpace.TS_WIDTH*(17) + TargetSpace.TS_HEIGHT / 2));
         }
+
         setOrientation(270);
 
-        //set initial direction (left)
+        //set initial direction index (left)
         nDirection = 0;
 
         setRadius(14);
@@ -184,7 +176,7 @@ public class Blinky extends Sprite
                     bFirstScatter = false;
                     bFirstChase = false;
                     bFirstScared = false;
-                    nGhostSpeed = 3; //hardcoded for now
+                    nGhostSpeed = 3;
                 }
             }
             else if (Game.getIsInvincible())
@@ -239,7 +231,8 @@ public class Blinky extends Sprite
                         bRecentTurn = true;
                         nTurnTick = Game.getnTick();
                     }
-                } else if (nDirection == 2)
+                }
+                else if (nDirection == 2)
                 {
                     if (pGhostCenter.x >= nXTurn)
                     {
@@ -267,7 +260,8 @@ public class Blinky extends Sprite
                         bRecentTurn = true;
                         nTurnTick = Game.getnTick();
                     }
-                } else if (nDirection == 2)
+                }
+                else if (nDirection == 2)
                 {
                     if (pGhostCenter.x >= nXTurn)
                     {
@@ -294,7 +288,8 @@ public class Blinky extends Sprite
                         bRecentTurn = true;
                         nTurnTick = Game.getnTick();
                     }
-                } else if (nDirection == 3)
+                }
+                else if (nDirection == 3)
                 {
                     if (pGhostCenter.y >= nYTurn)
                     {
@@ -436,7 +431,7 @@ public class Blinky extends Sprite
                 toTurnDown = true;
                 bTurnsQueued = true;
                 Point turn = AL.getTargetCenter();
-                nXTurn = turn.x; //+ TargetSpace.TS_WIDTH / 2;  //DEBUG check why this needs to be added
+                nXTurn = turn.x;
 
             }
             if (DL.getIsWall() && L.getIsWall() && !LU.getIsWall()) // turn up at corner
@@ -1199,13 +1194,13 @@ public class Blinky extends Sprite
                         toTurnLeft = true;
                         bTurnsQueued = true;
                         Point turn = AD.getTargetCenter();
-                        nYTurn = turn.y; //DEBUG
+                        nYTurn = turn.y;
                     } else
                     {
                         toTurnRight = true;
                         bTurnsQueued = true;
                         Point turn = AD.getTargetCenter();
-                        nYTurn = turn.y; //debug
+                        nYTurn = turn.y;
                     }
                 }
                 if (DL.getIsWall() && !D.getIsWall() && !RD.getIsWall()) //3 way intersection down right
