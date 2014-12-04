@@ -897,11 +897,13 @@ public class Game implements Runnable, KeyListener {
                 break;
             case OUIJA:
                 CommandCenter.ouija(nTick);
+                break;
             case PROTON:
                 if (!CommandCenter.getProton())
                 {
                     CommandCenter.protonPack();
                 }
+                break;
 
 			// possible future use
 			// case KILL:
