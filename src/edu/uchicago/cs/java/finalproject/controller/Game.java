@@ -48,21 +48,20 @@ public class Game implements Runnable, KeyListener {
 	public final static int ANI_DELAY = 45; // milliseconds between screen
 											// updates (animation)
 	private Thread thrAnim;
-	//private int nLevel = 1;
     private static int nLives = 4;
 	private static int nTick = 0;
     private static int nTickStore;
     private static int nDotCounter;
     private static int nEnergizerCounter;
-    //private static int nScore = 0;
     private static int nGhostsEaten;
-    private static int nScatterSeconds = 7; //hardcoded for testing
-    private static int nChaseSeconds = 20; //hardcoded for testing
+    private static int nScatterSeconds = 7;
+    private static int nChaseSeconds = 20;
+    private static int nProtonPacks = 3;
     private int nSirenTimer;
 	private ArrayList<Tuple> tupMarkForRemovals;
 	private ArrayList<Tuple> tupMarkForAdds;
-	private boolean bMuted = true;
-    private boolean bIntroDone = false;
+	//private boolean bMuted = true;
+    //private boolean bIntroDone = false;
     private boolean bInitial = true;
     private boolean bNewLevel;
     private boolean bRespawnAfterDeath;
@@ -83,6 +82,8 @@ public class Game implements Runnable, KeyListener {
 			START = 83, // s key
             OUIJA = 79, // o key
             PROTON = 71, // g key
+            B = 66, // b key
+            A = 65, // a key
 			FIRE = 32, // space key
 			MUTE = 77; // m-key mute
 
@@ -719,14 +720,7 @@ public class Game implements Runnable, KeyListener {
 
             }
         }
-		//if (isLevelClear() ){
-		//	if (CommandCenter.getFalcon() !=null)
-		//		CommandCenter.getFalcon().setProtected(true);
-        //
-		//	spawnAsteroids(CommandCenter.getLevel() + 2);
-		//	//CommandCenter.setLevel(CommandCenter.getLevel() + 1);
-        //
-        //		}
+
 	}
 	
 	
@@ -820,6 +814,10 @@ public class Game implements Runnable, KeyListener {
         Game.nTickStore = nTickStore;
     }
 
+    public static int getProtonsLeft()
+    {
+        return Game.nProtonPacks;
+    }
     public static int getLives()
     {
         return  Game.nLives;
@@ -877,8 +875,6 @@ public class Game implements Runnable, KeyListener {
                 {
                     stopLoopingSounds(clpSiren, Pacman.getWaka());
                 }
-				//else
-					//clpMusicBackground.loop(Clip.LOOP_CONTINUOUSLY);
 				break;
 			case QUIT:
 				System.exit(0);
@@ -899,8 +895,9 @@ public class Game implements Runnable, KeyListener {
                 CommandCenter.ouija(nTick);
                 break;
             case PROTON:
-                if (!CommandCenter.getProton())
+                if (!CommandCenter.getProton() && nProtonPacks > 0)
                 {
+                    nProtonPacks -= 1;
                     CommandCenter.protonPack();
                 }
                 break;

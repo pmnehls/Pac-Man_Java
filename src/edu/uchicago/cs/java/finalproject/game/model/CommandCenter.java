@@ -46,6 +46,7 @@ public class CommandCenter {
         setTimers();
         setScore(0);
         initPacmanLives();
+        initProtonPacks();
 
 	}
 	
@@ -115,6 +116,7 @@ public class CommandCenter {
             Game.setScaredSeconds(1);
         }
 
+
     }
 
     public static void playIntro()
@@ -128,7 +130,15 @@ public class CommandCenter {
     {
         for (int nC = 0; nC < Game.getLives() - 1; nC++)
         {
-            movLives.add(new Life(TargetSpace.TS_WIDTH * (3 + (2 * nC)), TargetSpace.TS_HEIGHT*35));
+            movLives.add(new Life(TargetSpace.TS_WIDTH * (1 + (2 * nC)), TargetSpace.TS_HEIGHT*35));
+        }
+    }
+
+    public static void initProtonPacks()
+    {
+        for (int nC = 0; nC < Game.getProtonsLeft(); nC++)
+        {
+            movLives.add(new ProtonPackDisplay(TargetSpace.TS_WIDTH * (14 + (2 * nC)), TargetSpace.TS_HEIGHT*35));
         }
     }
 
@@ -233,6 +243,7 @@ public class CommandCenter {
     public static void startNextLevel(int nLevel)
     {
         initPacmanLives();
+        initProtonPacks();
         setMaze();
         setLevel(nLevel);
         Game.setnTick(0);
@@ -272,6 +283,7 @@ public class CommandCenter {
         movProton.clear();
         Game.setnTick(0);
         initPacmanLives();
+        initProtonPacks();
         setTimers();
 
     }
@@ -304,6 +316,9 @@ public class CommandCenter {
             movProton.add(proton);
             CommandCenter.nProtonTick =  Game.getnTick();
             bProton = true;
+            movLives.clear();
+            initPacmanLives();
+            initProtonPacks();
 
         }
     }
