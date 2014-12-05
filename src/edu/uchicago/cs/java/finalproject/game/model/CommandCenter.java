@@ -17,8 +17,7 @@ public class CommandCenter {
 	private static boolean bPlaying;
     private static boolean bIntroDone = false;
 	private static boolean bPaused;
-    //private int nSecondTimer;
-    //private int nScore;
+
     private static int nProtonTick;
     private static boolean bProton;
 
@@ -291,18 +290,6 @@ public class CommandCenter {
     public static void ouija(int nTick)
     {
         spawnBlinky(false);
-//
-//         switch(nTick % 4)
-//        {
-////            case 0: spawnBlinky(true);
-////                break;
-////            case 1: spawnInky(true);
-////                break;
-////            case 2: spawnPinky(true);
-////                break;
-//            default: spawnBlinky(false);
-//                break;
-//        }
     }
 
     public static void protonPack()
@@ -342,6 +329,7 @@ public class CommandCenter {
 	public static boolean isGameOver() {		//if pacman's lives = 0, then game over
 		if (Game.getLives() == 0) {
 			Game.setStarted(false);
+            Game.setLives(4);
             return true;
 		}
 		return false;

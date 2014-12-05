@@ -4,6 +4,10 @@ import java.awt.*;
 
 /**
  * Created by pmnehls on 11/19/14.
+ *
+ * Target Spaces play a key role in this game. The grid is composed of 28x36 target spaces. The long equations below determine
+ * which square is a wall, which is a dot, and which is empty. passing in an x,y value can tell a ghost or pacman what is in any
+ * given square, telling them if they need to stop, turn, or if they are eating a dot
  */
 public class TargetSpace extends Sprite
 {

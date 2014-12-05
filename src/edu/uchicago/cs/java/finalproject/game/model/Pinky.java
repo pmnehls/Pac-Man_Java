@@ -431,7 +431,7 @@ public class Pinky extends Sprite
                 toTurnDown = true;
                 bTurnsQueued = true;
                 Point turn = AL.getTargetCenter();
-                nXTurn = turn.x; //+ TargetSpace.TS_WIDTH / 2;  //DEBUG check why this needs to be added
+                nXTurn = turn.x;
 
             }
             if (DL.getIsWall() && L.getIsWall() && !LU.getIsWall()) // turn up at corner
@@ -753,14 +753,14 @@ public class Pinky extends Sprite
                     toTurnLeft = true;
                     bTurnsQueued = true;
                     Point turn = AD.getTargetCenter();
-                    nYTurn = turn.y; //DEBUG
+                    nYTurn = turn.y;
                 }
                 else
                 {
                     toTurnRight = true;
                     bTurnsQueued = true;
                     Point turn = AD.getTargetCenter();
-                    nYTurn = turn.y; //debug
+                    nYTurn = turn.y;
                 }
             }
             if (DL.getIsWall() && !D.getIsWall() && !RD.getIsWall()) //3 way intersection down right
@@ -936,7 +936,7 @@ public class Pinky extends Sprite
                     toTurnDown = true;
                     bTurnsQueued = true;
                     Point turn = AL.getTargetCenter();
-                    nXTurn = turn.x; //+ TargetSpace.TS_WIDTH / 2;  //DEBUG check why this needs to be added
+                    nXTurn = turn.x;
 
                 }
                 if (DL.getIsWall() && L.getIsWall() && !LU.getIsWall()) // turn up at corner
@@ -1230,7 +1230,7 @@ public class Pinky extends Sprite
                     toTurnLeft = true;
                     bTurnsQueued = true;
                     Point turn = AD.getTargetCenter();
-                    nYTurn = turn.y;  //CHANGED TO DEBUG
+                    nYTurn = turn.y;
                 }
                 if (DL.getIsWall() && D.getIsWall() && !RD.getIsWall()) //turn right at corner
                 {
@@ -1252,13 +1252,13 @@ public class Pinky extends Sprite
                         toTurnLeft = true;
                         bTurnsQueued = true;
                         Point turn = AD.getTargetCenter();
-                        nYTurn = turn.y; //DEBUG
+                        nYTurn = turn.y;
                     } else
                     {
                         toTurnRight = true;
                         bTurnsQueued = true;
                         Point turn = AD.getTargetCenter();
-                        nYTurn = turn.y; //debug
+                        nYTurn = turn.y;
                     }
                 }
                 if (DL.getIsWall() && !D.getIsWall() && !RD.getIsWall()) //3 way intersection down right

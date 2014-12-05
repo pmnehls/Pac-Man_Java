@@ -11,7 +11,6 @@ public class Proton extends Sprite
 {
 
     private Pacman pacman;
-    private static int nProtonLength;
 
     public Proton(Pacman pacman)
     {

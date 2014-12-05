@@ -51,7 +51,7 @@ public class ProtonPackDisplay extends Sprite
 
         setColor(Color.GRAY);
 
-        //put life in correct location
+        //put pack display in correct location
         setCenter(new Point(x, y - TargetSpace.TS_HEIGHT/4));
 
         setOrientation(270);

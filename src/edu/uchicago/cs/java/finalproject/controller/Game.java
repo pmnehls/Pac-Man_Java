@@ -87,14 +87,8 @@ public class Game implements Runnable, KeyListener {
 			FIRE = 32, // space key
 			MUTE = 77; // m-key mute
 
-	 //SPECIAL = 70; 					// fire special weapon;  F key
 
-	//private Clip clpThrust;
-	//private Clip clpMusicBackground;
     private static Clip clpSiren;
-
-	//private static final int SPAWN_NEW_SHIP_FLOATER = 1200;
-
 
 
 	// ===============================================
@@ -106,7 +100,7 @@ public class Game implements Runnable, KeyListener {
 		gmpPanel = new GamePanel(DIM);
 		gmpPanel.addKeyListener(this);
 
-        //initialize siren backgroud sound
+        //initialize siren background sound
         clpSiren = Sound.clipForLoopFactory("siren.wav");
 
 	}
@@ -173,7 +167,7 @@ public class Game implements Runnable, KeyListener {
             //spawn pacman and ghosts after a pause after new level or death
             if(bNewLevel || bRespawnAfterDeath)
             {
-                if (nTick > 67 && bStarted)
+                if (nTick > 100 && bStarted)
                 {
                     CommandCenter.spawnAllAfterPause();
                     bNewLevel = false;
@@ -220,18 +214,6 @@ public class Game implements Runnable, KeyListener {
                 bFruit = true;
         }
 
-        //pause at new level or respawn
-//        if(bNewLevel || bRespawnAfterDeath)
-//        {
-//            if (nTick > 67)
-//            {
-//                System.out.printf("respawning at %d", nTick);
-//                CommandCenter.spawnAllAfterPause();
-//                bNewLevel = false;
-//                bRespawnAfterDeath = false;
-//            }
-//        }
-
         //@formatter:off
 		//for each friend in movFriends
 			//for each foe in movFoes
@@ -249,11 +231,7 @@ public class Game implements Runnable, KeyListener {
 		tupMarkForRemovals = new ArrayList<Tuple>();
 		tupMarkForAdds = new ArrayList<Tuple>();
 
-		Point pntFriendCenter, pntFoeCenter;
-		int nFriendRadiux, nFoeRadiux;
 
-        //for (Movable pacman : CommandCenter.movPacman)
-        //{
         if (CommandCenter.movPacman.size() != 0)
         {
             for (Movable dot : CommandCenter.movDots)
@@ -459,9 +437,9 @@ public class Game implements Runnable, KeyListener {
                     nGhostsEaten = 0;
                 }
 
-                if ((pacManSquare.x == ghostSquare.x) || Math.abs(pntPacman.x - pntGhost.x) < 3)
+                if ((pacManSquare.x == ghostSquare.x) || Math.abs(pntPacman.x - pntGhost.x) < 4)
                 {
-                    if ((pacManSquare.y == ghostSquare.y) || Math.abs(pntPacman.y - pntGhost.y) < 3)
+                    if ((pacManSquare.y == ghostSquare.y) || Math.abs(pntPacman.y - pntGhost.y) < 4)
                     {
                         if (isInvincible && !ghost.getRespawn())
                         {
@@ -536,61 +514,7 @@ public class Game implements Runnable, KeyListener {
             }
         }
 
-//		for (Movable movFriend : CommandCenter.movFriends) {
-//			for (Movable movFoe : CommandCenter.movFoes) {
-//
-//				pntFriendCenter = movFriend.getCenter();
-//				pntFoeCenter = movFoe.getCenter();
-//				nFriendRadiux = movFriend.getRadius();
-//				nFoeRadiux = movFoe.getRadius();
-//
-//				//detect collision
-//				if (pntFriendCenter.distance(pntFoeCenter) < (nFriendRadiux + nFoeRadiux)) {
-//
-//					//falcon
-//					if ((movFriend instanceof Falcon) ){
-//						if (!CommandCenter.getFalcon().getProtected()){
-//							tupMarkForRemovals.add(new Tuple(CommandCenter.movFriends, movFriend));
-//							CommandCenter.spawnFalcon(false);
-//							killFoe(movFoe);
-//						}
-//					}
-//					//not the falcon
-//					else {
-//						tupMarkForRemovals.add(new Tuple(CommandCenter.movFriends, movFriend));
-//						killFoe(movFoe);
-//					}//end else
-//
-//					//explode/remove foe
-//
-//
-//
-//				}//end if
-//			}//end inner for
-//		}//end outer for
 
-
-//		//check for collisions between falcon and floaters
-//		if (CommandCenter.getFalcon() != null){
-//			Point pntFalCenter = CommandCenter.getFalcon().getCenter();
-//			int nFalRadiux = CommandCenter.getFalcon().getRadius();
-//			Point pntFloaterCenter;
-//			int nFloaterRadiux;
-//
-//			for (Movable movFloater : CommandCenter.movFloaters) {
-//				pntFloaterCenter = movFloater.getCenter();
-//				nFloaterRadiux = movFloater.getRadius();
-//
-//				//detect collision
-//				if (pntFalCenter.distance(pntFloaterCenter) < (nFalRadiux + nFloaterRadiux)) {
-//
-//
-//					tupMarkForRemovals.add(new Tuple(CommandCenter.movFloaters, movFloater));
-//					Sound.playSound("pacman_eatghost.wav");
-//
-//				}//end if
-//			}//end inner for
-//		}//end if not null
 		
 		//remove these objects from their appropriate ArrayLists
 		//this happens after the above iterations are done
@@ -660,13 +584,7 @@ public class Game implements Runnable, KeyListener {
 		return nTick;
 	}
 
-	private void spawnNewShipFloater() {
-		//make the appearance of power-up dependent upon ticks and levels
-		//the higher the level the more frequent the appearance
-//		if (nTick % (SPAWN_NEW_SHIP_FLOATER - nLevel * 7) == 0) {
-//			CommandCenter.movFloaters.add(new NewShipFloater());
-//		}
-	}
+
 
 	// Called when user presses 's'
 	private void startGame() {
@@ -675,35 +593,15 @@ public class Game implements Runnable, KeyListener {
 		CommandCenter.initGame();
 		CommandCenter.setPlaying(true);
 		CommandCenter.setPaused(false);
+        CommandCenter.setScore(0);
         bStarted = true;
-		//if (!bMuted)
-		   // clpMusicBackground.loop(Clip.LOOP_CONTINUOUSLY);
+        bInitial = true;
+        bNewLevel = false;
+
 	}
 
-	//this method spawns new asteroids
-	private void spawnAsteroids(int nNum) {
-		//for (int nC = 0; nC < nNum; nC++) {
-		//	//Asteroids with size of zero are big
-		//	CommandCenter.movFoes.add(new Asteroid(0));
-		//}
-	}
-	
-	
-	private boolean isLevelClear(){
-		//if there are no more Asteroids on the screen
-		
-		boolean bAsteroidFree = true;
-		for (Movable movFoe : CommandCenter.movFoes) {
-			if (movFoe instanceof Asteroid){
-				bAsteroidFree = false;
-				break;
-			}
-		}
-		
-		return bAsteroidFree;
 
-		
-	}
+
 	
 	private void checkNewLevel()
     {
@@ -754,15 +652,6 @@ public class Game implements Runnable, KeyListener {
         Game.nDotCounter = nDotCounter;
     }
 
-//    public static int getScore()
-//    {
-//        return nScore;
-//    }
-
-    //public static void setScore(int nScore)
-//    {
-//        Game.nScore = nScore;
-//    }
 
     public static int getnScatterSeconds()
     {
@@ -902,11 +791,6 @@ public class Game implements Runnable, KeyListener {
                 }
                 break;
 
-			// possible future use
-			// case KILL:
-			// case SHIELD:
-			// case NUM_ENTER:
-
 			default:
 				break;
 			}
@@ -914,53 +798,7 @@ public class Game implements Runnable, KeyListener {
 	}
 
     public void keyReleased(KeyEvent e) {}
-//	@Override
-//	public void keyReleased(KeyEvent e) {
-//		Pacman pacman = CommandCenter.getPacman();
-//		int nKey = e.getKeyCode();
-//		 System.out.println(nKey);
-//
-//		if (pacman != null) {
-//			switch (nKey) {
-//			case FIRE:
-//				//CommandCenter.movFriends.add(new Bullet(fal));
-//				Sound.playSound("laser.wav");
-//				break;
-//
-//			//special is a special weapon, current it just fires the cruise missile.
-//			case SPECIAL:
-//				//CommandCenter.movFriends.add(new Cruise(fal));
-//				//Sound.playSound("laser.wav");
-//				break;
-//
-//			case LEFT:
-//				//fal.stopRotating();
-//				break;
-//			case RIGHT:
-//				fal.stopRotating();
-//				break;
-//			case UP:
-//				fal.thrustOff();
-//				clpThrust.stop();
-//				break;
-//
-//			case MUTE:
-//				if (!bMuted){
-//					stopLoopingSounds(clpMusicBackground);
-//					bMuted = !bMuted;
-//				}
-//				else {
-//					clpMusicBackground.loop(Clip.LOOP_CONTINUOUSLY);
-//					bMuted = !bMuted;
-//				}
-//				break;
-//
-//
-//			default:
-//				break;
-//			}
-//		}
-//	}
+
 
 	@Override
 	// Just need it b/c of KeyListener implementation

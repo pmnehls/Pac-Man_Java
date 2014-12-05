@@ -26,8 +26,6 @@ public class Pacman extends Sprite
 
     private boolean bMoving = true;
 
-    //private final double[] FLAME = { 23 * Math.PI / 24 + Math.PI / 2,
-    //        Math.PI + Math.PI / 2, 25 * Math.PI / 24 + Math.PI / 2 };
 
 
 
@@ -426,121 +424,6 @@ public class Pacman extends Sprite
         }
     }
 
-//    public void thrustOn() {
-//        bThrusting = true;
-//    }
-//
-//    public void thrustOff() {
-//        bThrusting = false;
-//        bFlame = false;
-//    }
-
-//    private int adjustColor(int nCol, int nAdj) {
-//        if (nCol - nAdj <= 0) {
-//            return 0;
-//        } else {
-//            return nCol - nAdj;
-//        }
-//    }
-
-//    //public void draw(Graphics g) {
-//
-//        //does the fading at the beginning or after hyperspace
-//        Color colShip;
-//        if (getFadeValue() == 255) {
-//            colShip = Color.white;
-//        } else {
-//            colShip = new Color(adjustColor(getFadeValue(), 200), adjustColor(
-//                    getFadeValue(), 175), getFadeValue());
-//        }
-
-//		//shield on
-//		if (bShield && nShield > 0) {
-//
-//			setShield(getShield() - 1);
-//
-//			g.setColor(Color.cyan);
-//			g.drawOval(getCenter().x - getRadius(),
-//					getCenter().y - getRadius(), getRadius() * 2,
-//					getRadius() * 2);
-//
-//		} //end if shield
-
-//        //thrusting
-//        if (bFlame) {
-//            g.setColor(colShip);
-//            //the flame
-//            for (int nC = 0; nC < FLAME.length; nC++) {
-//                if (nC % 2 != 0) //odd
-//                {
-//                    pntFlames[nC] = new Point((int) (getCenter().x + 2
-//                            * getRadius()
-//                            * Math.sin(Math.toRadians(getOrientation())
-//                            + FLAME[nC])), (int) (getCenter().y - 2
-//                            * getRadius()
-//                            * Math.cos(Math.toRadians(getOrientation())
-//                            + FLAME[nC])));
-//
-//                } else //even
-//                {
-//                    pntFlames[nC] = new Point((int) (getCenter().x + getRadius()
-//                            * 1.1
-//                            * Math.sin(Math.toRadians(getOrientation())
-//                            + FLAME[nC])),
-//                            (int) (getCenter().y - getRadius()
-//                                    * 1.1
-//                                    * Math.cos(Math.toRadians(getOrientation())
-//                                    + FLAME[nC])));
-//
-//                } //end even/odd else
-//
-//            } //end for loop
-//
-//            for (int nC = 0; nC < FLAME.length; nC++) {
-//                nXFlames[nC] = pntFlames[nC].x;
-//                nYFlames[nC] = pntFlames[nC].y;
-//
-//            } //end assign flame points
-//
-//            //g.setColor( Color.white );
-//            g.fillPolygon(nXFlames, nYFlames, FLAME.length);
-//
-//        } //end if flame
-//
-//        drawShipWithColor(g, colShip);
-//
-//    } //end draw()
-
-//    public void drawShipWithColor(Graphics g, Color col) {
-//        super.draw(g);
-//        g.setColor(col);
-//        g.drawPolygon(getXcoords(), getYcoords(), dDegrees.length);
-//    }
-
-    //public void fadeInOut() {
-//        if (getProtected()) {
-//            setFadeValue(getFadeValue() + 3);
-//        }
-//        if (getFadeValue() == 255) {
-//            setProtected(false);
-//        }
-    //}
-
-    public void setProtected(boolean bParam) {
-    //    if (bParam) {
-    //        setFadeValue(0);
-    //    }
-    //    bProtected = bParam;
-    }
-
-    public void setProtected(boolean bParam, int n) {
-    //    if (bParam && n % 3 == 0) {
-    //        setFadeValue(n);
-    //    } else if (bParam) {
-    //        setFadeValue(0);
-    //    }
-    //    bProtected = bParam;
-    }
 
     public void draw(Graphics g)
     {
@@ -548,13 +431,6 @@ public class Pacman extends Sprite
         g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
     }
 
-    //public boolean getProtected() {//return bProtected;
-    //}
-
-    public void setPacManSpeed(int nPacManSpeed)
-    {
-        this.nPacManSpeed = nPacManSpeed;
-    }
 
     public Point getPacmanSpaceCoord()
     {
