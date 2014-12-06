@@ -330,6 +330,10 @@ public class CommandCenter {
 		if (Game.getLives() == 0) {
 			Game.setStarted(false);
             Game.setLives(4);
+            Game.setProtonsLeft(3);
+            Game.setRespawnAfterDeath(false);
+            Game.setInitial(true);
+            Game.setDotCounter(0);
             return true;
 		}
 		return false;

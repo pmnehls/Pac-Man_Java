@@ -62,9 +62,9 @@ public class Game implements Runnable, KeyListener {
 	private ArrayList<Tuple> tupMarkForAdds;
 	//private boolean bMuted = true;
     //private boolean bIntroDone = false;
-    private boolean bInitial = true;
+    private static boolean bInitial = true;
     private boolean bNewLevel;
-    private boolean bRespawnAfterDeath;
+    private static boolean bRespawnAfterDeath;
     private static boolean bFruit = false;
     private boolean bBonusLife;
     private static boolean bStarted;
@@ -707,11 +707,25 @@ public class Game implements Runnable, KeyListener {
     {
         return Game.nProtonPacks;
     }
+
+    public static void setProtonsLeft(int nProtons)
+    {
+        Game.nProtonPacks = nProtons;
+    }
     public static int getLives()
     {
         return  Game.nLives;
     }
 
+    public static void setInitial(boolean initial)
+    {
+        Game.bInitial = initial;
+    }
+
+    public static void setRespawnAfterDeath(boolean bRespawn)
+    {
+        Game.bRespawnAfterDeath = bRespawn;
+    }
     public static void setLives(int nLives)
     {
         Game.nLives = nLives;
