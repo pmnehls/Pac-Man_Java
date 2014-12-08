@@ -333,6 +333,7 @@ public class CommandCenter {
             Game.setProtonsLeft(3);
             Game.setRespawnAfterDeath(false);
             Game.setInitial(true);
+            Game.setFruitBool(false);
             Game.setDotCounter(0);
             return true;
 		}
