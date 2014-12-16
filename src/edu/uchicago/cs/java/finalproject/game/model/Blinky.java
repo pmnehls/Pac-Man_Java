@@ -111,10 +111,10 @@ public class Blinky extends Sprite
                     TargetSpace.TS_WIDTH*(17) + TargetSpace.TS_HEIGHT / 2));
         }
 
-        setOrientation(270);
-
         //set initial direction index (left)
         nDirection = 0;
+        setOrientation(270);
+
 
         setRadius(14);
 

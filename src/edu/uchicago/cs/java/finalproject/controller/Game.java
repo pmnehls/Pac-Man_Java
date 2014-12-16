@@ -42,26 +42,34 @@ public class Game implements Runnable, KeyListener {
 	// FIELDS
 	// ===============================================
 
-	public static final Dimension DIM = new Dimension(TargetSpace.TS_WIDTH* 28, TargetSpace.TS_HEIGHT * 37); //the dimension of the game.
+	public static final Dimension DIM = new Dimension(TargetSpace.TS_WIDTH* 28, TargetSpace.TS_HEIGHT * 37); //the dimension of the game
+    //to change dimensions of the game (not recommended), change TargetSpace.TS_HEIGHT or TS_WIDTH, not the above dimensions
 	private GamePanel gmpPanel;
 	public static Random R = new Random();
 	public final static int ANI_DELAY = 45; // milliseconds between screen
 											// updates (animation)
 	private Thread thrAnim;
-    private static int nLives = 4;
+
+
+    private static int nLives = 4; //set number of initial lives
+    private static int nProtonPacks = 3; //set number of initial proton packs
+    private static int nScatterSeconds = 7; //set second length of scatter intervals
+    private static int nChaseSeconds = 20; //set second length of chase intervals
+
+
+    //variables to keep track of scores and level progress
 	private static int nTick = 0;
     private static int nTickStore;
     private static int nDotCounter;
     private static int nEnergizerCounter;
     private static int nGhostsEaten;
-    private static int nScatterSeconds = 7;
-    private static int nChaseSeconds = 20;
-    private static int nProtonPacks = 3;
-    private int nSirenTimer;
+
+    private int nSirenTimer; //makes siren sound loop when no other sound is active
+
 	private ArrayList<Tuple> tupMarkForRemovals;
 	private ArrayList<Tuple> tupMarkForAdds;
-	//private boolean bMuted = true;
-    //private boolean bIntroDone = false;
+
+    //booleans to control timing, fruit spawn, and initial music
     private static boolean bInitial = true;
     private boolean bNewLevel;
     private static boolean bRespawnAfterDeath;
@@ -77,18 +85,15 @@ public class Game implements Runnable, KeyListener {
 			QUIT = 81, // q key
 			LEFT = 37, // turn left; left arrow
 			RIGHT = 39, // turn right; right arrow
-			UP = 38, // move up
-            DOWN = 40, // move down
+			UP = 38, // turn up; up arrow
+            DOWN = 40, // turn down; down arrow
 			START = 83, // s key
             OUIJA = 79, // o key
-            PROTON = 71, // g key
-            B = 66, // b key
-            A = 65, // a key
-			FIRE = 32, // space key
-			MUTE = 77; // m-key mute
+            PROTON = 71; // g key
 
 
-    private static Clip clpSiren;
+
+    private static Clip clpSiren; //background siren sound
 
 
 	// ===============================================
@@ -272,6 +277,7 @@ public class Game implements Runnable, KeyListener {
         }
         //}
 
+        //eat energizers and set invincible booleans
         for (Movable pacman : CommandCenter.movPacman)
         {
             for (Movable energizer : CommandCenter.movEnergizers)
@@ -313,7 +319,6 @@ public class Game implements Runnable, KeyListener {
 
             }
         }
-
 
 
         //handle proton pack
@@ -531,45 +536,6 @@ public class Game implements Runnable, KeyListener {
 		
 	}//end meth
 
-	private void killFoe(Movable movFoe) {
-		
-		if (movFoe instanceof Asteroid){
-
-			//we know this is an Asteroid, so we can cast without threat of ClassCastException
-			Asteroid astExploded = (Asteroid)movFoe;
-			//big asteroid 
-			if(astExploded.getSize() == 0){
-				//spawn two medium Asteroids
-				tupMarkForAdds.add(new Tuple(CommandCenter.movFoes,new Asteroid(astExploded)));
-				tupMarkForAdds.add(new Tuple(CommandCenter.movFoes,new Asteroid(astExploded)));
-				
-			} 
-			//medium size aseroid exploded
-			else if(astExploded.getSize() == 1){
-				//spawn three small Asteroids
-				tupMarkForAdds.add(new Tuple(CommandCenter.movFoes,new Asteroid(astExploded)));
-				tupMarkForAdds.add(new Tuple(CommandCenter.movFoes,new Asteroid(astExploded)));
-				tupMarkForAdds.add(new Tuple(CommandCenter.movFoes,new Asteroid(astExploded)));
-			}
-			//remove the original Foe	
-			tupMarkForRemovals.add(new Tuple(CommandCenter.movFoes, movFoe));
-		
-			
-		} 
-		//not an asteroid
-		else {
-			//remove the original Foe
-			tupMarkForRemovals.add(new Tuple(CommandCenter.movFoes, movFoe));
-		}
-		
-		
-		
-
-		
-		
-		
-		
-	}
 
 	//some methods for timing events in the game,
 	//such as the appearance of UFOs, floaters (power-ups), etc. 

@@ -8,19 +8,14 @@ import java.util.ArrayList;
  */
 public class Wall extends Sprite
 {
-    private int nWallX;
-    private int nWallY;
 
     public Wall(int x, int y)
     {
         super();
 
-        nWallX = x;
-        nWallY = y;
-
         ArrayList<Point> pntCs = new ArrayList<Point>();
 
-        //simple wall
+        //simple square wall
         pntCs.add(new Point(1, 1));
         pntCs.add(new Point(1, -1));
         pntCs.add(new Point(-1, -1));
@@ -36,24 +31,10 @@ public class Wall extends Sprite
         setRadius(6);
     }
 
-    public void drawWall()
-    {
-
-    }
-
     @Override
     public void draw(Graphics g) {
         super.draw(g);
         g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
     }
 
-    public int getWallX()
-    {
-        return nWallX;
-    }
-
-    public int getnWallY()
-    {
-        return nWallY;
-    }
 }

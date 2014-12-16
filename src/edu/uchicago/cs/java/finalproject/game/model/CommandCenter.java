@@ -12,7 +12,6 @@ public class CommandCenter {
 	private static int nNumFalcon;
 	private static int nLevel = 1;
 	private static long lScore;
-	private static Falcon falShip;
     private static Pacman pacman;
 	private static boolean bPlaying;
     private static boolean bIntroDone = false;
@@ -366,10 +365,6 @@ public class CommandCenter {
 	//}
 
     public static Pacman getPacman() { return pacman;}
-
-	public static void setFalcon(Falcon falParam){
-		falShip = falParam;
-	}
 
     public static boolean getProton()
     {

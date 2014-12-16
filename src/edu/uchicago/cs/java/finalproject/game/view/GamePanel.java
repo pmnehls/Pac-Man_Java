@@ -11,7 +11,6 @@ import javax.swing.JFrame;
 
 import edu.uchicago.cs.java.finalproject.controller.Game;
 import edu.uchicago.cs.java.finalproject.game.model.CommandCenter;
-import edu.uchicago.cs.java.finalproject.game.model.Falcon;
 import edu.uchicago.cs.java.finalproject.game.model.Movable;
 import edu.uchicago.cs.java.finalproject.game.model.TargetSpace;
 import edu.uchicago.cs.java.finalproject.sounds.Sound;
